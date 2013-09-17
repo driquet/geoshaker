@@ -1,24 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Damien Riquet (d.riquet@gmail.com)">
 
-        <!-- start: Meta -->
-        <meta charset="utf-8">
-        <title>{% block title %}GeoShake{% endblock %}</title>
-        <!-- end: Meta -->
-    </head>
+    <title>Geoshaker - Shake mystery caches !</title>
 
-    <body>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }} </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('.static_files', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('.static_files', filename='css/style.css') }}" rel="stylesheet" type="text/css">
+
+  </head>
+
+  <body>
+
+
+    <!-- Wrap all page content here -->
+    <div id="wrap">
+      <!-- Begin page content -->
+      <div class="container">
+        <div class="page-header">
+            <h1>Geoshaker <small>Shake mystery caches</small></h1>
+        </div>
+        <p class="lead">While solving mystery cache, Geoshaker give you a hand by shaking all combinations and keeping the coherent ones. Give it a try !</p>
+
         {% block content %}
         {% endblock %}
-    </body>
+
+      </div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">GeoShaker - Shake mystery caches.</p>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+  </body>
 </html>

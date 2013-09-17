@@ -1,0 +1,14 @@
+{% macro form_field_label(field, size=6) -%}
+    <div class="form-group">
+        <label for="{{  field.id }}" class="col-sm-4 control-label">{{ field.label }}</label>
+        <div class="col-sm-{{ size }}">
+            <input type="text" name="{{ field.id }}" id="{{ field.id }}" class="form-control" placeholder="{{ field.default }}">
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro form_input(field) -%}
+    <div class="col-sm-2">
+        <input type="text" name="{{ field.id }}" id="{{ field.id }}" class="form-control" placeholder="{{ field.default }}">
+    </div>
+{%- endmacro %}

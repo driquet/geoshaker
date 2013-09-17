@@ -1,5 +1,5 @@
-from flask import Flask, render_template, flash, request
-import forms
+from flask import Flask, render_template, request, send_from_directory
+import forms, os
 app = Flask(__name__)
 app.secret_key = 'blablabla'
 
@@ -9,6 +9,12 @@ def hello_world():
     if request.method == 'POST' and form.validate():
         print 'validate !'
     return render_template('home.html', form=form)
+
+@app.route('/static_files/<path:filename>')
+def static_files(filename):
+    """ Deals with static files (like css and js) """
+    static_path = os.path.join('templates', 'static')
+    return send_from_directory(static_path, filename)
 
 if __name__ == '__main__':
     app.run(debug=True)

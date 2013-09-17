@@ -1,20 +1,32 @@
 {% extends "base.html" %}
+{% import "forms.html" as m %}
+
 {% block content %}
-    <form method="post">
-        {% for field in form.errors %}
-        {% for error in form.errors[field] %}
-            <div class="alert alert-error">
-                <strong>Error!</strong> {{ field }}.{{error}}
+
+    <form class="form-horizontal well" role="form" method="post">
+
+        <fieldset>
+            <legend>Coordinates to shake</legend>
+            {{ m.form_field_label(form.mystery) }}
+            {{ m.form_field_label(form.cache) }}
+            {{ m.form_field_label(form.max_distance, size=2) }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Unknown values</legend>
+            <div class="form-group">
+                <label for="start-date" class="col-sm-4 control-label">Variable 1</label>
+                <div class="col-sm-2">
+                    <input type="text" name="startDate" id="start-date" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" name="startTime" id="start-time" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" name="startTime" id="start-time" class="form-control">
+                </div>
             </div>
-        {% endfor %}
-        {% endfor %}
+        </fieldset>
 
-        {{ form.origin.lat_pos }} {{ form.origin.lat_deg(size=4)}} {{ form.origin.lat_min_floor(size=4) }} {{ form.origin.lat_min_decimal(size=4) }} <br/>
-        {{ form.origin.lon_pos }} {{ form.origin.lon_deg(size=4)}} {{ form.origin.lon_min_floor(size=4) }} {{ form.origin.lon_min_decimal(size=4) }} <br/>
-        {{ form.mystery.lat_pos }} {{ form.mystery.lat_deg(size=4)}} {{ form.mystery.lat_min_floor(size=4) }} {{ form.mystery.lat_min_decimal(size=4) }} <br/>
-        {{ form.mystery.lon_pos }} {{ form.mystery.lon_deg(size=4)}} {{ form.mystery.lon_min_floor(size=4) }} {{ form.mystery.lon_min_decimal(size=4) }} <br/>
-        {{ form.max_distance(size=5) }} <br/>
-
-        <input type="submit">
     </form>
 {% endblock %}
