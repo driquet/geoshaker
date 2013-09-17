@@ -57,8 +57,6 @@ class DecimalDegrees:
 
 
 
-
-
 def geocaching2decimal(lat, lon):
     """
         Create decimal degrees coordinates from geocaching coordinates
