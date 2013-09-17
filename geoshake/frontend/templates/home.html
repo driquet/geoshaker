@@ -24,24 +24,15 @@
 
         <fieldset>
             <legend>Unknown values</legend>
-            <div class="form-group">
-                <label for="start-date" class="col-sm-4 control-label">Variable 1</label>
-                <div class="col-sm-2">
-                    <input type="text" name="startDate" id="start-date" class="form-control">
-                </div>
-                <div class="col-sm-2">
-                    <input type="text" name="startTime" id="start-time" class="form-control">
-                </div>
-                <div class="col-sm-2">
-                    <input type="text" name="startTime" id="start-time" class="form-control">
-                </div>
-            </div>
+            {% for var in form.variables %}
+                {{ m.form_variable(var, loop.index) }}
+            {% endfor %}
         </fieldset>
 
-
         <hr/>
-
         <button type="submit" class="btn btn-default col-lg-offset-10">Submit</button>
+
+
 
     </form>
 {% endblock %}

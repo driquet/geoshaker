@@ -17,8 +17,17 @@
     {% endif %}
 {%- endmacro %}
 
-{% macro form_input(field) -%}
-    <div class="col-sm-2">
-        <input type="text" name="{{ field.id }}" id="{{ field.id }}" class="form-control" placeholder="{{ field.default }}">
+{% macro form_variable(field, idx) -%}
+    <div class="form-group">
+        <label for="{{ field.symbol.id }}" class="col-sm-4 control-label">Variable {{ idx }}</label>
+        <div class="col-sm-2">
+            <input type="text" name="{{ field.symbol.id }}" id="{{ field.symbol.id }}" class="form-control">
+        </div>
+        <div class="col-sm-2">
+            <input type="text" name="{{ field.min_val.id }}" id="{{ field.min_val.id }}" class="form-control">
+        </div>
+        <div class="col-sm-2">
+            <input type="text" name="{{ field.max_val.id }}" id="{{ field.max_val.id }}" class="form-control">
+        </div>
     </div>
 {%- endmacro %}
