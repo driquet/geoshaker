@@ -10,7 +10,10 @@ from wtforms import Form, TextField, IntegerField, validators
 
 
 class UnknownForm(Form):
-    pass
+    symbol = TextField('Symbol', [validators.required()], default="A")
+    min_val = IntegerField('Minimum value', [validators.required()], default=0)
+    max_val = IntegerField('Minimum value', [validators.required()], default=10)
+
 
 class ShakerForm(Form):
     """
@@ -22,5 +25,5 @@ class ShakerForm(Form):
     """
     # Origin and mystery data
     mystery = TextField('Mystery coordinates', [validators.required()], default="N50 40.000 E003 10.000")
-    cache = TextField('Mystery coordinates', [validators.required()], default="N50 40.ABC E3 10.CBA")
-    max_distance = IntegerField('Max distance (km)', [validators.required()], default=2)
+    cache = TextField('Cache coordinates', [validators.required()], default="N50 40.A00 E3 10.00A")
+    max_distance = IntegerField('Max distance (km)', [validators.required(), validators.NumberRange(min=1)], default=2)

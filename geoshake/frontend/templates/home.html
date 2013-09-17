@@ -5,6 +5,16 @@
 
     <form class="form-horizontal well" role="form" method="post">
 
+        {% if form.errors %}
+        <ul class="errors">
+            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                {% for error in field_errors %}
+                    <li>{{ form[field_name].label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+
         <fieldset>
             <legend>Coordinates to shake</legend>
             {{ m.form_field_label(form.mystery) }}
@@ -27,6 +37,11 @@
                 </div>
             </div>
         </fieldset>
+
+
+        <hr/>
+
+        <button type="submit" class="btn btn-default col-lg-offset-10">Submit</button>
 
     </form>
 {% endblock %}
