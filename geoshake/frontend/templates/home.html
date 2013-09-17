@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <form method="post">
+        {% for field in form.errors %}
+        {% for error in form.errors[field] %}
+            <div class="alert alert-error">
+                <strong>Error!</strong> {{ field }}.{{error}}
+            </div>
+        {% endfor %}
+        {% endfor %}
+
+        {{ form.origin.lat_pos }} {{ form.origin.lat_deg(size=4)}} {{ form.origin.lat_min_floor(size=4) }} {{ form.origin.lat_min_decimal(size=4) }} <br/>
+        {{ form.origin.lon_pos }} {{ form.origin.lon_deg(size=4)}} {{ form.origin.lon_min_floor(size=4) }} {{ form.origin.lon_min_decimal(size=4) }} <br/>
+        {{ form.mystery.lat_pos }} {{ form.mystery.lat_deg(size=4)}} {{ form.mystery.lat_min_floor(size=4) }} {{ form.mystery.lat_min_decimal(size=4) }} <br/>
+        {{ form.mystery.lon_pos }} {{ form.mystery.lon_deg(size=4)}} {{ form.mystery.lon_min_floor(size=4) }} {{ form.mystery.lon_min_decimal(size=4) }} <br/>
+        {{ form.max_distance(size=5) }} <br/>
+
+        <input type="submit">
+    </form>
+{% endblock %}
