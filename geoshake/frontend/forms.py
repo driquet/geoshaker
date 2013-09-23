@@ -52,8 +52,8 @@ cache_re = re.compile(
 
 class UnknownForm(Form):
     symbol = TextField('Symbol', [validators.required()], default="A")
-    min_val = IntegerField('Minimum value', [], default=0)
-    max_val = IntegerField('Minimum value', [], default=10)
+    min_val = TextField('Minimum value', [validators.required()], default='0')
+    max_val = TextField('Minimum value', [validators.required()], default='9')
 
 
 class ShakerForm(Form):
