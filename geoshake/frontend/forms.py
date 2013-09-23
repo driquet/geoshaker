@@ -6,7 +6,7 @@ Author: Damien Riquet <d.riquet@gmail.com>
 Description: Web forms
 '''
 
-import re
+import re, string
 from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators
 
 
@@ -54,6 +54,30 @@ class UnknownForm(Form):
     symbol = TextField('Symbol', [validators.required()], default="A")
     min_val = TextField('Minimum value', [validators.required()], default='0')
     max_val = TextField('Minimum value', [validators.required()], default='9')
+
+    def validate_symbol(form, field):
+        if len(field.data) > 1 or field.data not in string.uppercase:
+            raise validators.ValidationError('Symbol must be a character (A to Z)')
+
+
+    def validate_min_val(form, field):
+        if not field.data.isdigit():
+            raise validators.ValidationError('Min value must be an integer')
+        val = int(field.data)
+        if val < 0:
+            raise validators.ValidationError('Min value must be positive')
+
+        if form.max_val.data.isdigit():
+            val_max = int(form.max_val.data)
+            if val > val_max:
+                raise validators.ValidationError('Min value must greater or equal to max value')
+
+    def validate_max_val(form, field):
+        if not field.data.isdigit():
+            raise validators.ValidationError('Max value must be an integer')
+        val = int(field.data)
+        if val < 0:
+            raise validators.ValidationError('Max value must be positive')
 
 
 class ShakerForm(Form):
