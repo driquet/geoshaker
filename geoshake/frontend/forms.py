@@ -75,6 +75,9 @@ class ShakerForm(Form):
         validators.NumberRange(min=1, message="Must be greater or equal to %(min)d."),
     ], default=2)
 
+    # Unknowns / Variables
+    variables = FieldList(FormField(UnknownForm), [validators.required()], min_entries=1, max_entries=6)
+
 
 if __name__ == '__main__':
     coord = "N50 40.A00 E3 10.00A"

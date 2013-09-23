@@ -24,7 +24,7 @@
 
         <fieldset>
             <legend>Unknown values</legend>
-            {% for var in variables %}
+            {% for var in form.variables %}
                 {{ m.form_variable(var, loop.index) }}
             {% endfor %}
         </fieldset>

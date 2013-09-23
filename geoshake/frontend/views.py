@@ -6,10 +6,9 @@ app.secret_key = 'blablabla'
 @app.route('/', methods=['GET', 'POST'])
 def hello_world():
     form = forms.ShakerForm(request.form)
-    variables = [forms.UnknownForm(request.form)] * 6
     if request.method == 'POST' and form.validate():
         print 'validate !'
-    return render_template('home.html', form=form, variables=variables)
+    return render_template('home.html', form=form)
 
 @app.route('/static_files/<path:filename>')
 def static_files(filename):
