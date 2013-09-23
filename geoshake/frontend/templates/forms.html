@@ -20,14 +20,15 @@
 {% macro form_variable(field, idx) -%}
     <div class="form-group">
         <label for="{{ field.symbol.id }}" class="col-sm-4 control-label">Variable {{ idx }}</label>
-        <div class="col-sm-2">
+        <div class="col-sm-2 {% if 'symbol' in field.errors %}has-error{% endif %}">
             <input type="text" name="{{ field.symbol.id }}" id="{{ field.symbol.id }}" class="form-control">
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 {% if 'min_val' in field.errors %}has-error{% endif %}">
             <input type="text" name="{{ field.min_val.id }}" id="{{ field.min_val.id }}" class="form-control">
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 {% if 'max_val' in field.errors %}has-error{% endif %}">
             <input type="text" name="{{ field.max_val.id }}" id="{{ field.max_val.id }}" class="form-control">
         </div>
+
     </div>
 {%- endmacro %}
