@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="well">
+    <h3>Shaker summary</h3>
+    <dl class="dl-horizontal">
+        <dt>Mystery coordinates</dt>
+        <dd>{{ shake.mystery }}</dd>
+        <dt>Cache coordinates</dt>
+        <dd>{{ shake.cache}}</dd>
+        <dt>Max distance (km)</dt>
+        <dd>{{ shake.max_distance }}</dd>
+    </dl>
+
+    <h4>Variables</h4>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">Symbol</th>
+                <th class="text-center">Min value</th>
+                <th class="text-center">Max value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for var in shake.variables %}
+            <tr>
+                <td class="text-center">{{ loop.index }}</td>
+                <td class="text-center">{{ var[0] }}</td>
+                <td class="text-center">{{ var[1] }}</td>
+                <td class="text-center">{{ var[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div>
+    <h3>Combinations shaked : {{ combinations|length }}/{{ nb_combinations}}</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="text-center">#</th>
+                {% for var in shake.variables %}
+                <th class="text-center">{{ var[0] }}</th>
+                {% endfor %}
+                <th class="text-center">Coordinates</th>
+                <th class="text-center">Distance to mystery</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for combination in combinations %}
+            <tr>
+                <td class="text-center">{{ loop.index }}</td>
+                {% for c in combination[0] %}
+                <td class="text-center">{{ c }}</td>
+                {% endfor %}
+                <td class="text-center">{{ combination[1].to_geocaching_string() }}</td>
+                <td class="text-center">{{ "%.2f" % combination[2] }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div>
+    <h3>Map</h3>
+    <div id="gmap" class="google-map-canvas"></div>
+</div>
+{% endblock %}
+
+
+{% block js_include %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb9OxndZ_xfhGgZYYyX5EKB9GmudnDWpk&sensor=false"></script>
+<script>
+var map;
+function initialize() {
+    var center = new google.maps.LatLng({{ mystery_coord.lat }}, {{mystery_coord.lon }})
+    var info_window = new google.maps.InfoWindow();
+    var mapOptions = {
+        zoom: 13,
+        center: center,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('gmap'),
+                              mapOptions);
+
+    <!-- Mystery overlay -->
+    var mysteryCircle = {
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: map,
+      center: center,
+      radius: {{ shake.max_distance * 1000}}
+    };
+    cityCircle = new google.maps.Circle(mysteryCircle);
+
+    var mystery_string = '<p> Mystery coordinates : {{ mystery_coord.to_geocaching_string() }}</p>';
+    var mystery_marker = new google.maps.Marker({
+        position: center,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        map: map
+    });
+    google.maps.event.addListener(mystery_marker, 'click', function() {
+        info_window.setContent(mystery_string);
+        info_window.open(map, mystery_marker);
+    });
+
+
+    {% for combination in combinations %}
+        var content_{{ loop.index0 }} = '<p>Coordinates : {{ combination[1].to_geocaching_string() }}</p>';
+        var marker_{{ loop.index0 }} = new google.maps.Marker({
+            position: new google.maps.LatLng({{ combination[1].lat }}, {{ combination[1].lon }}),
+            map: map
+        });
+        google.maps.event.addListener(marker_{{ loop.index0 }}, 'click', function() {
+            info_window.setContent(content_{{ loop.index0 }});
+            info_window.open(map, marker_{{ loop.index0 }});
+        });
+    {% endfor %}
+}
+
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+{% endblock %}

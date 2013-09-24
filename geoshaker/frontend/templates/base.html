@@ -12,6 +12,8 @@
     <link href="{{ url_for('.static_files', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ url_for('.static_files', filename='css/style.css') }}" rel="stylesheet" type="text/css">
 
+    {% block header_include %}{% endblock %}
+
   </head>
 
   <body>
@@ -41,5 +43,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    {% block js_include %}{% endblock %}
   </body>
 </html>

@@ -38,7 +38,7 @@ class DecimalDegrees:
         lat_min = (lat - lat_deg) * 60
         lon_min = (lon - lon_deg) * 60
 
-        return '%s%d°%.3f %s%d°%.3f' % (lat_pos, lat_deg, lat_min, lon_pos, lon_deg, lon_min)
+        return '%s%d %.3f %s%d %.3f' % (lat_pos, lat_deg, lat_min, lon_pos, lon_deg, lon_min)
 
     def distance_to(self, other):
         """
@@ -54,8 +54,6 @@ class DecimalDegrees:
         c = 2 * asin(sqrt(a))
         km = 6371 * c
         return km
-
-
 
 def geocaching2decimal(lat, lon):
     """

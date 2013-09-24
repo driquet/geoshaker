@@ -6,16 +6,6 @@
 
     <form class="form-horizontal well" role="form" method="post">
 
-        {% if form.errors %}
-        <ul class="errors">
-            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-                {% for error in field_errors %}
-                    <li>{{ form[field_name].label }}: {{ error }}</li>
-                {% endfor %}
-            {% endfor %}
-        </ul>
-        {% endif %}
-
         <fieldset>
             <legend>Coordinates to shake</legend>
             {{ m.form_field_label(form.mystery) }}
@@ -34,6 +24,13 @@
             {% for var in form.variables %}
                 {{ m.form_variable(var, loop.index) }}
             {% endfor %}
+
+            <p class="col-sm-offset-8">
+                <button type="button" class="btn btn-default btn-sm" id="add_another_button">
+                <span class="glyphicon glyphicon-plus"></span> Add a variable
+                </button>
+            </p>
+
         </fieldset>
 
         <hr/>
@@ -42,4 +39,40 @@
 
 
     </form>
+{% endblock %}
+
+{% block js_include %}
+
+<script>
+    $(document).ready(function () {
+        $('#add_another_button').click(function () {
+            clone_field_list('div.form-group:last');
+        });
+    });
+
+
+    function clone_field_list(selector) {
+        var new_element = $(selector).clone(true);
+        var elem_id = new_element.find(':input')[0].id;
+        var elem_num = parseInt(elem_id.replace(/.*-(\d{1,4})-.*/m, '$1')) + 1;
+        if (elem_num < 6) {
+            new_element.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + (elem_num - 1) + '-', '-' + elem_num + '-');
+                $(this).attr({'name': id, 'id': id}).val('').removeAttr('checked');
+            });
+            new_element.find('label').each(function() {
+                var new_for = $(this).attr('for').replace('-' + (elem_num - 1) + '-', '-' + elem_num + '-');
+                $(this).attr('for', new_for);
+            });
+            new_element.find('label:first').text('Variable ' + (elem_num + 1));
+            $(selector).after(new_element);
+
+            if (elem_num == 5) {
+                $('#add_another_button').attr("disabled", true);
+            }
+        }
+    }
+
+</script>
+
 {% endblock %}

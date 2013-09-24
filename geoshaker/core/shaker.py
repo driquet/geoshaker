@@ -25,6 +25,9 @@ class UnknownValue:
 
 
 def generate_solutions(origin, coord, unknowns, max_distance=2):
+
+    origin = coordinates.geocaching2decimal(*origin)
+
     solutions = []
     for combination in itertools.product(*unknowns):
         substitutions = [(unknowns[i].symbol, combination[i]) for i in xrange(len(combination))]
@@ -41,7 +44,7 @@ def generate_solutions(origin, coord, unknowns, max_distance=2):
 
             d = origin.distance_to(attempt)
             if d <= max_distance:
-                solutions.append((combination, attempt))
+                solutions.append((combination, attempt, d))
         else:
             print 'invalid', attempt_lat, attempt_lon
 
@@ -53,7 +56,7 @@ def substitute(coord_value, substitutions):
     str_value = str(coord_value)
     for symbol, value in substitutions:
         str_value = str_value.replace(symbol, str(value))
-    return int(str_value)
+    return float(str_value)
 
 def valid_coordinates(lat, lon):
     return value_between(lat[1], 0, 99) and \
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     c = UnknownValue('C', 0, 9)
 
     coord = ((1, '50', '40', 'AB4'), (1, 'A', '40', 'CC4'))
-    orig = coordinates.geocaching2decimal((1, 50, 40.500), (1, 3, 40.225))
+    orig = ((1, 50, 40.500), (1, 3, 40.225))
 
 
     total = len(a) * len(b) * len(c)
