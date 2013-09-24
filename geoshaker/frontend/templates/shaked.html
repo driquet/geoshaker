@@ -3,76 +3,99 @@
 {% block content %}
 
 
-<div class="well">
-    <h3>Shaker summary</h3>
-    <dl class="dl-horizontal">
-        <dt>Mystery coordinates</dt>
-        <dd>{{ shake.mystery }}</dd>
-        <dt>Cache coordinates</dt>
-        <dd>{{ shake.cache}}</dd>
-        <dt>Max distance (km)</dt>
-        <dd>{{ shake.max_distance }}</dd>
-    </dl>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    Shaker summary
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <h3>Shaker summary</h3>
+                <dl class="dl-horizontal">
+                    <dt>Mystery coordinates</dt>
+                    <dd>{{ shake.mystery }}</dd>
+                    <dt>Cache coordinates</dt>
+                    <dd>{{ shake.cache}}</dd>
+                    <dt>Max distance (km)</dt>
+                    <dd>{{ shake.max_distance }}</dd>
+                </dl>
 
-    <h4>Variables</h4>
+                <h4>Variables</h4>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Symbol</th>
-                <th class="text-center">Min value</th>
-                <th class="text-center">Max value</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for var in shake.variables %}
-            <tr>
-                <td class="text-center">{{ loop.index }}</td>
-                <td class="text-center">{{ var[0] }}</td>
-                <td class="text-center">{{ var[1] }}</td>
-                <td class="text-center">{{ var[2] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">Symbol</th>
+                            <th class="text-center">Min value</th>
+                            <th class="text-center">Max value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for var in shake.variables %}
+                    <tr>
+                        <td class="text-center">{{ loop.index }}</td>
+                        <td class="text-center">{{ var[0] }}</td>
+                        <td class="text-center">{{ var[1] }}</td>
+                        <td class="text-center">{{ var[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                    Combinations shaked : {{ combinations|length }}/{{ nb_combinations}}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            {% for var in shake.variables %}
+                            <th class="text-center">{{ var[0] }}</th>
+                            {% endfor %}
+                            <th class="text-center">Coordinates</th>
+                            <th class="text-center">Distance to mystery</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for combination in combinations %}
+                    <tr>
+                        <td class="text-center">{{ loop.index }}</td>
+                        {% for c in combination[0] %}
+                        <td class="text-center">{{ c }}</td>
+                        {% endfor %}
+                        <td class="text-center">{{ combination[1].to_geocaching_string() }}</td>
+                        <td class="text-center">{{ "%.2f" % combination[2] }}</td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 
-<div>
-    <h3>Combinations shaked : {{ combinations|length }}/{{ nb_combinations}}</h3>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="text-center">#</th>
-                {% for var in shake.variables %}
-                <th class="text-center">{{ var[0] }}</th>
-                {% endfor %}
-                <th class="text-center">Coordinates</th>
-                <th class="text-center">Distance to mystery</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            {% for combination in combinations %}
-            <tr>
-                <td class="text-center">{{ loop.index }}</td>
-                {% for c in combination[0] %}
-                <td class="text-center">{{ c }}</td>
-                {% endfor %}
-                <td class="text-center">{{ combination[1].to_geocaching_string() }}</td>
-                <td class="text-center">{{ "%.2f" % combination[2] }}</td>
-
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 
 
 <div>
-    <h3>Map</h3>
+    <p/>
     <div id="gmap" class="google-map-canvas"></div>
 </div>
 {% endblock %}
