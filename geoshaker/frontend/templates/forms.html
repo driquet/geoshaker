@@ -1,4 +1,4 @@
-{% macro form_field_label(field, size=6) -%}
+{% macro form_field_label(field, tooltip, size=6) -%}
     <div class="form-group">
         <label for="{{  field.id }}" class="col-sm-4 control-label">{{ field.label }}</label>
         <div class="col-sm-{{ size }} {% if field.errors %}has-error{% endif %}">

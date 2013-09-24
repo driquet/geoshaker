@@ -8,13 +8,25 @@
 
         <fieldset>
             <legend>Coordinates to shake</legend>
-            {{ m.form_field_label(form.mystery) }}
+            <p>
+            <em>
+                Please enter here the initial coordinates of the mystery cache and
+                the coordinates of the cache which can contain symbols (a symbol is a lowercase letter).
+            </em>
+            </p>
+            {{ m.form_field_label(form.mystery, "test") }}
             {{ m.form_field_label(form.cache) }}
             {{ m.form_field_label(form.max_distance, size=2) }}
         </fieldset>
 
         <fieldset>
             <legend>Unknown values</legend>
+            <p>
+            <em>
+                An unknown value is a variable. It has a name (or a symbol) and a range (from min to max value).
+                You can use up to 6 variables.
+            </em>
+            </p>
             <div class="form-group">
                 <p class="col-sm-offset-4 col-sm-2 text-center"><strong>Symbol</strong></p>
                 <p class="col-sm-2 text-center"><strong>Min value</strong></p>
@@ -34,7 +46,15 @@
         </fieldset>
 
         <hr/>
-        <button type="submit" class="btn btn-default col-lg-offset-10">Submit</button>
+            <div class="alert alert-info hide" id="loading-div">
+            <p class="text-center">
+            <small>
+                Computing all the combination can be long. Please do not refresh the page, it will not make it quicker !
+            </small>
+            </p>
+            </div>
+
+            <button type="submit" id="form_button" class="btn btn-default col-lg-offset-10">Submit</button>
 
 
 
@@ -48,6 +68,12 @@
         $('#add_another_button').click(function () {
             clone_field_list('div.form-group:last');
         });
+
+        $('#form_button').click(function () {
+            $('#loading-div').removeClass('hide');
+        });
+
+
     });
 
 
