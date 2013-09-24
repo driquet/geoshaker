@@ -31,33 +31,33 @@ mystery_re = re.compile(
 
 
 # Cache regexp
-# It must be valid coordinates but it can contains symbol like A-Z
+# It must be valid coordinates but it can contains symbol like a-z
 # Format example : N50 40.A00 E3 10.00A
 cache_re = re.compile(
     "\s*"
     "(?P<lat_pos>(?:N|S))" # Latitude position
     "\s*"
-    "(?P<lat_deg>(?:\d|[A-Z]){1,2})" # Latitude degrees
+    "(?P<lat_deg>(?:\d|[a-z]){1,2})" # Latitude degrees
     "\s+" # At least one space
-    "(?P<lat_min>(?:\d|[A-Z]){1,2}\.(?:\d|[A-Z]){1,3})" # Latitude minutes
+    "(?P<lat_min>(?:\d|[a-z]){1,2}\.(?:\d|[a-z]){1,3})" # Latitude minutes
     "\s+" # At least one space
     "(?P<lon_pos>(?:E|W))" # Latitude position
     "\s*"
-    "(?P<lon_deg>(?:\d|[A-Z]){1,3})" # Longitude degrees
+    "(?P<lon_deg>(?:\d|[a-z]){1,3})" # Longitude degrees
     "\s+" # At least one space
-    "(?P<lon_min>(?:\d|[A-Z]){1,2}\.(?:\d|[A-Z]){3})" # Longitude minutes
+    "(?P<lon_min>(?:\d|[a-z]){1,2}\.(?:\d|[a-z]){3})" # Longitude minutes
     "$"
 )
 
 
 class UnknownForm(Form):
-    symbol = TextField('Symbol', [validators.required()], default="A")
+    symbol = TextField('Symbol', [validators.required()], default="a")
     min_val = TextField('Minimum value', [validators.required()], default='0')
     max_val = TextField('Minimum value', [validators.required()], default='9')
 
     def validate_symbol(form, field):
-        if len(field.data) > 1 or field.data not in string.uppercase:
-            raise validators.ValidationError('Symbol must be a character (A to Z)')
+        if len(field.data) > 1 or field.data not in string.lowercase:
+            raise validators.ValidationError('Symbol must be a character (a-z)')
 
 
     def validate_min_val(form, field):
@@ -94,13 +94,20 @@ class ShakerForm(Form):
     ], default="N50 40.000 E003 10.000")
     cache = TextField('Cache coordinates', [
         validators.Regexp(cache_re, message="Wrong coordinates format.")
-    ], default="N50 40.A00 E3 10.00A")
+    ], default="N50 40.a00 E3 10.00a")
     max_distance = IntegerField('Max distance (km)', [
         validators.NumberRange(min=1, message="Must be greater or equal to %(min)d."),
     ], default=2)
 
     # Unknowns / Variables
     variables = FieldList(FormField(UnknownForm), [validators.required()], min_entries=1, max_entries=6)
+
+    def validate_cache(form, field):
+        symbols = set(c for c in field.data if c in string.lowercase)
+        variables = { s.form.symbol.data for s in form.variables }
+
+        if len(symbols - variables):
+            raise validators.ValidationError('Missing unknown value(s) : %s' % ', '.join(symbols - variables))
 
 
 if __name__ == '__main__':
