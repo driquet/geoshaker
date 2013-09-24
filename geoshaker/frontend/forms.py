@@ -91,10 +91,10 @@ class ShakerForm(Form):
     # Origin and mystery data
     mystery = TextField('Mystery coordinates', [
         validators.Regexp(mystery_re, message="Wrong coordinates format.")
-    ], default="N50 40.000 E003 10.000")
+    ], default="N50 38.455 E003 02.670")
     cache = TextField('Cache coordinates', [
         validators.Regexp(cache_re, message="Wrong coordinates format.")
-    ], default="N50 40.a00 E3 10.00a")
+    ], default="N50 38.aa2 E003 02.5a3")
     max_distance = IntegerField('Max distance (km)', [
         validators.NumberRange(min=1, message="Must be greater or equal to %(min)d."),
     ], default=2)

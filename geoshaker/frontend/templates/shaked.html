@@ -129,7 +129,7 @@ function initialize() {
     };
     cityCircle = new google.maps.Circle(mysteryCircle);
 
-    var mystery_string = '<p> Mystery coordinates : {{ mystery_coord.to_geocaching_string() }}</p>';
+    var mystery_string = '<p><strong>Mystery coordinates </strong>: {{ mystery_coord.to_geocaching_string() }}</p>';
     var mystery_marker = new google.maps.Marker({
         position: center,
         icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
@@ -142,10 +142,14 @@ function initialize() {
 
 
     {% for combination in combinations %}
-        var content_{{ loop.index0 }} = '<p>Coordinates : {{ combination[1].to_geocaching_string() }}</p>';
+        var content_{{ loop.index0 }} = '<div style="width: 250px;"><p><strong>Coordinates </strong>: {{ combination[1].to_geocaching_string() }}.' +
+        '<br/> <strong>Variables </strong>: ' +
+            '{{ format_variables(shake.variables, combination[0]) }}'
+        '</p></div>';
         var marker_{{ loop.index0 }} = new google.maps.Marker({
             position: new google.maps.LatLng({{ combination[1].lat }}, {{ combination[1].lon }}),
-            map: map
+            map: map,
+            maxWidth: 300
         });
         google.maps.event.addListener(marker_{{ loop.index0 }}, 'click', function() {
             info_window.setContent(content_{{ loop.index0 }});
