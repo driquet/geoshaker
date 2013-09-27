@@ -7,7 +7,7 @@ Description: Web forms
 '''
 
 import re, string
-from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators
+from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators, FloatField
 
 
 # Mystery regexp
@@ -95,8 +95,8 @@ class ShakerForm(Form):
     cache = TextField('Cache coordinates', [
         validators.Regexp(cache_re, message="Wrong coordinates format.")
     ], default="N50 38.aa2 E003 02.5a3")
-    max_distance = IntegerField('Max distance (km)', [
-        validators.NumberRange(min=1, message="Must be greater or equal to %(min)d."),
+    max_distance = FloatField('Max distance (km)', [
+        validators.NumberRange(min=0, message="Must be greater or equal to %(min)d."),
     ], default=2)
 
     # Unknowns / Variables
