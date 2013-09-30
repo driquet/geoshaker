@@ -45,18 +45,42 @@
 
         </fieldset>
 
+        <fieldset>
+            <legend>Custom markers</legend>
+            <p>
+            <em>
+                You can add custom markers on the map. You can draw a circle around this marker (default is 161 meters, hehe).
+                Also, you can exclude combinations from shaked combinations if the result is too close from your marker.
+                Useful, eh !
+            </em>
+            </p>
+
+            <div class="form-group">
+                <p class="col-sm-offset-1 col-sm-3 text-center"><strong>Name</strong></p>
+                <p class="col-sm-3 text-center"><strong>Coordinates</strong></p>
+                <p class="col-sm-2 text-center"><strong>Radius</strong></p>
+                <p class="col-sm-1 text-center"><strong>Circle</strong></p>
+                <p class="col-sm-1 text-center"><strong>Exclude</strong></p>
+            </div>
+
+            {% for custom in form.customs %}
+                {{ m.form_custom(custom, loop.index) }}
+            {% endfor %}
+
+
+        </fieldset>
+
+
         <hr/>
-            <div class="alert alert-info hide" id="loading-div">
+        <div class="alert alert-info hide" id="loading-div">
             <p class="text-center">
             <small>
                 Computing all the combination can be long. Please do not refresh the page, it will not make it quicker !
             </small>
             </p>
-            </div>
+        </div>
 
-            <button type="submit" id="form_button" class="btn btn-default col-lg-offset-10">Submit</button>
-
-
+        <button type="submit" id="form_button" class="btn btn-default col-lg-offset-10">Submit</button>
 
     </form>
 {% endblock %}
@@ -66,7 +90,7 @@
 <script>
     $(document).ready(function () {
         $('#add_another_button').click(function () {
-            clone_field_list('div.form-group:last');
+            clone_field_list('.unknowns:last');
         });
 
         $('#form_button').click(function () {

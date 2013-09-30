@@ -69,6 +69,11 @@ def home():
 
         return render_template('shaked.html', **context)
 
+    # If no custom markers exists
+    # Create one
+    if not len(form.customs):
+        form.customs.append_entry(forms.CustomItem())
+
     return render_template('home.html', form=form)
 
 @frontend.route('/static_files/<path:filename>')

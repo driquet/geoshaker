@@ -7,7 +7,7 @@ Description: Web forms
 '''
 
 import re, string
-from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators, FloatField
+from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators, FloatField, BooleanField
 
 
 # Mystery regexp
@@ -80,6 +80,18 @@ class UnknownForm(Form):
             raise validators.ValidationError('Max value must be positive')
 
 
+class CustomItem(Form):
+    custom_name = TextField('Name', [validators.required()])
+    coordinates = TextField('Coordinates', [validators.Regexp(mystery_re, message="Wrong coordinates format.")])
+    circle_draw = BooleanField('Draw circle')
+    circle_radius = IntegerField('Circle radius (m)', [
+        validators.NumberRange(min=1, message="Must be greater or equal to %(min)d.")
+    ], default=161)
+    exclude_from = BooleanField('Exclude combinations')
+
+
+
+
 class ShakerForm(Form):
     """
         A skaker form is composed of several fields :
@@ -101,6 +113,9 @@ class ShakerForm(Form):
 
     # Unknowns / Variables
     variables = FieldList(FormField(UnknownForm), [validators.required()], min_entries=1, max_entries=6)
+
+    # Custom items
+    customs = FieldList(FormField(CustomItem))
 
     def validate_cache(form, field):
         symbols = set(c for c in field.data if c in string.lowercase)
