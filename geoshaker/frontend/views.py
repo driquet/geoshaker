@@ -58,10 +58,11 @@ def home():
 
         # Manage custom markers
         shake['customs'] = []
+        customs = []
         for custom in form.customs:
 
             c_split = forms.cache_re.match(custom.coordinates.data)
-            c_coord= (
+            c_coord= coordinates.geocaching2decimal(
                 (
                     1 if c_split.group(1) == 'N' else -1,
                     int(c_split.group(2)),
@@ -74,15 +75,17 @@ def home():
             )
             c = {
                 'name': custom.custom_name.data,
-                'coordinates': coordinates.geocaching2decimal(*c_coord),
+                'coordinates': c_coord,
                 'circle_radius': int(custom.circle_radius.data),
                 'circle_draw': bool(custom.circle_draw.data),
             }
             shake['customs'].append(c)
+            if bool(custom.exclude_from.data):
+                customs.append((c_coord, c['circle_radius']))
 
         # Compute combinations
         nb_combinations = reduce(operator.mul, [len(elt) for elt in variables])
-        combinations = shaker.generate_solutions(mystery, cache, variables, shake['max_distance'])
+        combinations = shaker.generate_solutions(mystery, cache, variables, customs, shake['max_distance'])
 
         context = {
             'shake' : shake,

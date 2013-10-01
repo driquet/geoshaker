@@ -24,7 +24,7 @@ class UnknownValue:
         return self.bound_max - self.bound_min + 1
 
 
-def generate_solutions(origin, coord, unknowns, max_distance=2):
+def generate_solutions(origin, coord, unknowns, excluded_area, max_distance=2):
 
     origin = coordinates.geocaching2decimal(*origin)
 
@@ -42,8 +42,20 @@ def generate_solutions(origin, coord, unknowns, max_distance=2):
 
             attempt = coordinates.geocaching2decimal(attempt_lat, attempt_lon)
 
+            # Verify that this combination is not too far from the origin point
             d = origin.distance_to(attempt)
-            if d <= max_distance:
+            if d > max_distance:
+                continue
+
+            # Is it inside a excluded area ?
+            excluded = False
+            for area_coord, area_distance in excluded_area:
+                d = area_coord.distance_to(attempt)
+                if d <= (area_distance/float(1000)):
+                    excluded = True
+                    break
+
+            if not excluded:
                 solutions.append((combination, attempt, d))
         else:
             print 'invalid', attempt_lat, attempt_lon
