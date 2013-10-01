@@ -37,27 +37,52 @@
 
 {% macro form_custom(custom, idx) -%}
     <div class="form-group">
-        <label for="{{ custom.custom_name.id }}" class="col-sm-1 control-label">{{ idx }}</label>
         <div class="col-sm-3 {% if 'custom_name' in custom.errors %}has-error{% endif %}">
-            <input type="text" name="{{ custom.custom_name.id }}" id="{{ custom.custom_name.id }}" class="form-control">
+            <input type="text" name="{{ custom.custom_name.id }}" id="{{ custom.custom_name.id }}"
+            class="form-control" value="{% if custom.custom_name.data %}{{ custom.custom_name.data }}{% endif %}">
         </div>
-        <div class="col-sm-3 {% if 'coordinates' in custom.errors %}has-error{% endif %}">
-            <input type="text" name="{{ custom.coordinates.id }}" id="{{ custom.coordinates.id }}" class="form-control">
+        <div class="col-sm-4 {% if 'coordinates' in custom.errors %}has-error{% endif %}">
+            <input type="text" name="{{ custom.coordinates.id }}" id="{{ custom.coordinates.id }}"
+            class="form-control" value="{% if custom.coordinates.data %}{{ custom.coordinates.data }}{% endif %}">
         </div>
 
         <div class="col-sm-2 {% if 'circle_radius' in custom.errors %}has-error{% endif %}">
-            <input type="text" name="{{ custom.circle_radius.id }}" id="{{ custom.circle_radius.id }}" class="form-control">
+            <input type="text" name="{{ custom.circle_radius.id }}" id="{{ custom.circle_radius.id }}"
+            class="form-control" value="{% if custom.circle_radius.data %}{{ custom.circle_radius.data }}{% endif %}">
         </div>
 
-        <div class="col-sm-1 {% if 'coordinates' in custom.errors %}has-error{% endif %}">
-            <input type="checkbox" name="{{ custom.circle_draw.id }}" id="{{ custom.circle_draw.id }}">
-            {{ custom.circle_draw.data }}
+        <div class="col-sm-1">
+            <input type="checkbox" name="{{ custom.circle_draw.id }}" id="{{ custom.circle_draw.id }}"
+            {% if custom.circle_draw.data %}checked{% endif %}>
         </div>
 
-        <div class="col-sm-1 {% if 'coordinates' in custom.errors %}has-error{% endif %}">
-            <input type="checkbox" name="{{ custom.exclude_from.id }}" id="{{ custom.exclude_from.id }}">
-            {{ custom.exclude_from.data }}
+        <div class="col-sm-1">
+            <input type="checkbox" name="{{ custom.exclude_from.id }}" id="{{ custom.exclude_from.id }}"
+            {% if custom.exclude_from.data %}checked{% endif %}>
         </div>
 
+    </div>
+{%- endmacro %}
+
+{% macro new_custom() -%}
+    <div class="form-group">
+        <div class="col-sm-3 ">
+            <input name="customs-i-custom_name" id="customs-i-custom_name" class="form-control"
+            type="text" placeholder="Cache/Marker name">
+        </div>
+        <div class="col-sm-4 ">
+            <input name="customs-i-coordinates" id="customs-i-coordinates" class="form-control"
+            type="text" placeholder="NXX XX.XXX EYYY YY.YYY">
+        </div>
+        <div class="col-sm-2 ">
+            <input name="customs-i-circle_radius" id="customs-i-circle_radius" class="form-control"
+            type="text" value="161">
+        </div>
+        <div class="col-sm-1 ">
+            <input type="checkbox" name="customs-i-circle_draw" id="customs-i-circle_draw" checked>
+        </div>
+        <div class="col-sm-1 ">
+            <input name="customs-i-exclude_from" id="customs-i-exclude_from" type="checkbox">
+        </div>
     </div>
 {%- endmacro %}

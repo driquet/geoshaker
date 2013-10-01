@@ -50,6 +50,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
@@ -128,7 +129,7 @@ function initialize() {
     map = new google.maps.Map(document.getElementById('gmap'),
                               mapOptions);
 
-    <!-- Mystery overlay -->
+    // Mystery overlay
     var mysteryCircle = {
       strokeColor: '#FF0000',
       strokeOpacity: 0.8,
@@ -152,7 +153,7 @@ function initialize() {
         info_window.open(map, mystery_marker);
     });
 
-
+    // Shaked combinations
     {% for combination in combinations %}
         var content_{{ loop.index0 }} = '<div style="width: 250px;"><p><strong>Coordinates </strong>: {{ combination[1].to_geocaching_string() }}.' +
         '<br/> <strong>Variables </strong>: ' +
@@ -167,6 +168,40 @@ function initialize() {
             info_window.setContent(content_{{ loop.index0 }});
             info_window.open(map, marker_{{ loop.index0 }});
         });
+    {% endfor %}
+
+    // Custom markers
+    {% for marker in shake.customs %}
+        var custom_{{ loop.index0 }} = new google.maps.LatLng({{ marker.coordinates.lat }}, {{ marker.coordinates.lon }});
+        var custom_marker_{{ loop.index0 }} = new google.maps.Marker({
+            position: custom_{{ loop.index0 }},
+            map: map,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+        });
+
+        var content_marker_{{ loop.index0 }} = '<div style="width: 250px;"><p><strong>Custom Marker </strong>: {{ marker.name }} ' +
+        '<br/><strong>Coordinates </strong>: {{ marker.coordinates.to_geocaching_string() }}.' +
+        '</p></div>';
+
+        google.maps.event.addListener(custom_marker_{{ loop.index0 }}, 'click', function() {
+            info_window.setContent(content_marker_{{ loop.index0 }});
+            info_window.open(map, custom_marker_{{ loop.index0 }});
+        });
+
+
+        {% if marker.circle_draw %}
+            // Circle overlay
+            new google.maps.Circle({
+                strokeColor: '#00FF00',
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                fillColor: '#00FF00',
+                fillOpacity: 0.35,
+                map: map,
+                center: custom_{{ loop.index0 }},
+                radius: {{ marker.circle_radius }}
+            });
+        {% endif %}
     {% endfor %}
 }
 

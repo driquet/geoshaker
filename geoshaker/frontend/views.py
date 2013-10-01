@@ -22,7 +22,7 @@ def home():
             'cache'     : form.cache.data,
             'max_distance'  : form.max_distance.data,
             'variables' :
-                [(v.form.symbol.data, int(v.form.min_val.data), int(v.form.max_val.data)) for v in form.variables]
+                [(v.form.symbol.data, int(v.form.min_val.data), int(v.form.max_val.data)) for v in form.variables],
         }
 
         # Splitting up coordinates
@@ -56,6 +56,30 @@ def home():
         )
         variables = [shaker.UnknownValue(*elt) for elt in shake['variables']]
 
+        # Manage custom markers
+        shake['customs'] = []
+        for custom in form.customs:
+
+            c_split = forms.cache_re.match(custom.coordinates.data)
+            c_coord= (
+                (
+                    1 if c_split.group(1) == 'N' else -1,
+                    int(c_split.group(2)),
+                    float(c_split.group(3))
+                ), (
+                    1 if c_split.group(4) == 'E' else -1,
+                    int(c_split.group(5)),
+                    float(c_split.group(6)),
+                )
+            )
+            c = {
+                'name': custom.custom_name.data,
+                'coordinates': coordinates.geocaching2decimal(*c_coord),
+                'circle_radius': int(custom.circle_radius.data),
+                'circle_draw': bool(custom.circle_draw.data),
+            }
+            shake['customs'].append(c)
+
         # Compute combinations
         nb_combinations = reduce(operator.mul, [len(elt) for elt in variables])
         combinations = shaker.generate_solutions(mystery, cache, variables, shake['max_distance'])
@@ -69,10 +93,6 @@ def home():
 
         return render_template('shaked.html', **context)
 
-    # If no custom markers exists
-    # Create one
-    if not len(form.customs):
-        form.customs.append_entry(forms.CustomItem())
 
     return render_template('home.html', form=form)
 

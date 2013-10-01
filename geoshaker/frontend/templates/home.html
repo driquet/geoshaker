@@ -38,14 +38,14 @@
             {% endfor %}
 
             <p class="col-sm-offset-8">
-                <button type="button" class="btn btn-default btn-sm" id="add_another_button">
+                <button type="button" class="btn btn-default btn-sm" id="add_variable">
                 <span class="glyphicon glyphicon-plus"></span> Add a variable
                 </button>
             </p>
 
         </fieldset>
 
-        <fieldset>
+        <fieldset id="marker_fs">
             <legend>Custom markers</legend>
             <p>
             <em>
@@ -55,9 +55,9 @@
             </em>
             </p>
 
-            <div class="form-group">
-                <p class="col-sm-offset-1 col-sm-3 text-center"><strong>Name</strong></p>
-                <p class="col-sm-3 text-center"><strong>Coordinates</strong></p>
+            <div class="form-group {% if not form.customs|length %}hide{% endif %}">
+                <p class="col-sm-3 text-center"><strong>Name</strong></p>
+                <p class="col-sm-4 text-center"><strong>Coordinates</strong></p>
                 <p class="col-sm-2 text-center"><strong>Radius</strong></p>
                 <p class="col-sm-1 text-center"><strong>Circle</strong></p>
                 <p class="col-sm-1 text-center"><strong>Exclude</strong></p>
@@ -66,6 +66,13 @@
             {% for custom in form.customs %}
                 {{ m.form_custom(custom, loop.index) }}
             {% endfor %}
+
+            <p class="col-sm-offset-8">
+                <button type="button" class="btn btn-default btn-sm" id="add_marker">
+                <span class="glyphicon glyphicon-plus"></span> Add a marker
+                </button>
+            </p>
+
 
 
         </fieldset>
@@ -80,7 +87,7 @@
             </p>
         </div>
 
-        <button type="submit" id="form_button" class="btn btn-default col-lg-offset-10">Submit</button>
+        <button type="submit" id="form_button" class="btn btn-default col-sm-offset-10">Submit</button>
 
     </form>
 {% endblock %}
@@ -89,19 +96,47 @@
 
 <script>
     $(document).ready(function () {
-        $('#add_another_button').click(function () {
-            clone_field_list('.unknowns:last');
+        $('#add_variable').click(function () {
+            clone_variable('.unknowns:last');
         });
 
         $('#form_button').click(function () {
             $('#loading-div').removeClass('hide');
         });
 
+        $('#add_marker').click(function () {
+            clone_marker();
+        });
+
 
     });
 
+    function clone_marker() {
+        marker_fs = $('#marker_fs');
 
-    function clone_field_list(selector) {
+        // Toggle header
+        header_fs = marker_fs.find('div:first')
+        if (header_fs.hasClass('hide')) {
+            header_fs.removeClass('hide');
+        }
+
+        // Create new div
+        var marker_nb = marker_fs.find('div.form-group').length - 1;
+        var new_marker = $('{{ m.new_custom()|replace("\n","") }}');
+
+        // Replace i with corresponding index
+        new_marker.find('label:first').text((marker_nb + 1));
+        new_marker.find(':input').each(function() {
+            var id = $(this).attr('id').replace('-i-', '-' + marker_nb + '-');
+            $(this).attr({'name': id, 'id': id});
+        });
+
+        marker_fs.find('div.form-group:last').after(new_marker);
+
+
+    }
+
+    function clone_variable(selector) {
         var new_element = $(selector).clone(true);
         var elem_id = new_element.find(':input')[0].id;
         var elem_num = parseInt(elem_id.replace(/.*-(\d{1,4})-.*/m, '$1')) + 1;
