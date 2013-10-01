@@ -32,6 +32,9 @@
             <input type="text" name="{{ field.max_val.id }}" id="{{ field.max_val.id }}" class="form-control"
             value="{% if field.max_val.data %}{{ field.max_val.data }}{% endif %}">
         </div>
+        <div class="col-sm-1 {% if idx <= 1 %}hide{% endif %}">
+            <a href="javascript:void(0)" onclick="remove_variable({{ idx }});"><span class="glyphicon glyphicon-remove"></span></a>
+        </div>
     </div>
 {%- endmacro %}
 

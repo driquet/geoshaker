@@ -31,7 +31,7 @@
             {{ m.form_field_label(form.max_distance, size=2) }}
         </fieldset>
 
-        <fieldset>
+        <fieldset id="variable_fs">
             <legend>Unknown values</legend>
             <p>
             <em>
@@ -39,7 +39,7 @@
                 You can use up to 6 variables.
             </em>
             </p>
-            <div class="form-group">
+            <div>
                 <p class="col-sm-offset-4 col-sm-2 text-center"><strong>Symbol</strong></p>
                 <p class="col-sm-2 text-center"><strong>Min value</strong></p>
                 <p class="col-sm-2 text-center"><strong>Max value</strong></p>
@@ -109,7 +109,7 @@
 <script>
     $(document).ready(function () {
         $('#add_variable').click(function () {
-            clone_variable('.unknowns:last');
+            add_variable();
         });
 
         $('#form_button').click(function () {
@@ -117,13 +117,13 @@
         });
 
         $('#add_marker').click(function () {
-            clone_marker();
+            add_marker();
         });
 
 
     });
 
-    function clone_marker() {
+    function add_marker() {
         var marker_fs = $('#marker_fs');
         var header_fs = marker_fs.find('div:first');
         var marker_nb = marker_fs.find('div.form-group').length;
@@ -135,7 +135,6 @@
         }
 
         // Replace i with corresponding index
-        new_marker.find('label:first').text((marker_nb + 1));
         new_marker.find(':input').each(function() {
             var id = $(this).attr('id').replace('-i-', '-' + marker_nb + '-');
             $(this).attr({'name': id, 'id': id});
@@ -172,31 +171,60 @@
 
         // Remove corresponding marker
         markers[idx].remove();
-
-
     }
 
-    function clone_variable(selector) {
-        var new_element = $(selector).clone(true);
-        var elem_id = new_element.find(':input')[0].id;
-        var elem_num = parseInt(elem_id.replace(/.*-(\d{1,4})-.*/m, '$1')) + 1;
-        if (elem_num < 6) {
-            new_element.find(':input').each(function() {
-                var id = $(this).attr('id').replace('-' + (elem_num - 1) + '-', '-' + elem_num + '-');
-                $(this).attr({'name': id, 'id': id}).val('').removeAttr('checked');
-            });
-            new_element.find('label').each(function() {
-                var new_for = $(this).attr('for').replace('-' + (elem_num - 1) + '-', '-' + elem_num + '-');
-                $(this).attr('for', new_for);
-            });
-            new_element.find('label:first').text('Variable ' + (elem_num + 1));
-            $(selector).after(new_element);
+    function add_variable() {
+        var variable_fs = $('#variable_fs');
+        var v_len = variable_fs.find('div.form-group').length;
+        var v_last = $('#variable_fs div.form-group:last');
 
-            if (elem_num == 5) {
-                $('#add_another_button').attr("disabled", true);
+        if (v_len < 6) {
+            // Create the new variable
+            var new_variable = v_last.clone(true);
+            new_variable.find('label:first').text('Variable ' + v_len);
+
+            new_variable.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + (v_len - 1) + '-', '-' + v_len + '-');
+                // Replace id, name and set value to empty
+                $(this).attr({'name': id, 'id': id}).val('');
+            });
+            new_variable.find('label:first').text('Variable ' + (v_len + 1));
+            new_variable.find('div:last').removeClass('hide');
+            new_variable.find('a:last').attr('onclick', 'remove_variable(' + v_len + ');')
+
+            // Insert new variable
+            v_last.after(new_variable);
+
+            // Disable button if necessary
+            if (v_len == 5) {
+                $('#add_variable').addClass("hide");
             }
         }
     }
+
+    function remove_variable(idx) {
+        alert(idx);
+        var variable_fs = $('#variable_fs');
+        var variables = variable_fs.find('div.form-group');
+
+        // Toggle button if necessary
+        $('#add_variable').removeClass("hide");
+
+        // Update following markers
+        for (var i = idx + 1; i < variables.length; i++) {
+            var variable = $(variables[i]);
+            variable.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + i + '-', '-' + (i - 1) + '-');
+                $(this).attr({'name': id, 'id': id});
+            });
+            variable.find('label:first').text('Variable ' + i);
+            variable.find('a:last').attr('onclick', 'remove_variable(' + (i - 1) + ');')
+        }
+
+        // Remove corresponding marker
+        variables[idx].remove();
+    }
+
 
 </script>
 
