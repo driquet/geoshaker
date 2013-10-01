@@ -61,6 +61,10 @@
             {% if custom.exclude_from.data %}checked{% endif %}>
         </div>
 
+        <div class="col-sm-1">
+            <a href="javascript:void(0)" onclick="remove_custom({{ idx}});"><span class="glyphicon glyphicon-remove"></span></a>
+        </div>
+
     </div>
 {%- endmacro %}
 
@@ -83,6 +87,9 @@
         </div>
         <div class="col-sm-1 ">
             <input name="customs-i-exclude_from" id="customs-i-exclude_from" type="checkbox">
+        </div>
+        <div class="col-sm-1">
+            <a href="javascript:void(0)"><span class="glyphicon glyphicon-remove"></span></a>
         </div>
     </div>
 {%- endmacro %}

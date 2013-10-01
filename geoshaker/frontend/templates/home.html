@@ -4,6 +4,18 @@
 {% block content %}
     <p class="lead">While solving mystery cache, Geoshaker gives you a hand by shaking all combinations and keeping the coherent ones. Give it a try !</p>
 
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
     <form class="form-horizontal well" role="form" method="post">
 
         <fieldset>
@@ -55,7 +67,7 @@
             </em>
             </p>
 
-            <div class="form-group {% if not form.customs|length %}hide{% endif %}">
+            <div class="{% if not form.customs|length %}hide{% endif %}">
                 <p class="col-sm-3 text-center"><strong>Name</strong></p>
                 <p class="col-sm-4 text-center"><strong>Coordinates</strong></p>
                 <p class="col-sm-2 text-center"><strong>Radius</strong></p>
@@ -64,7 +76,7 @@
             </div>
 
             {% for custom in form.customs %}
-                {{ m.form_custom(custom, loop.index) }}
+                {{ m.form_custom(custom, loop.index0) }}
             {% endfor %}
 
             <p class="col-sm-offset-8">
@@ -112,17 +124,15 @@
     });
 
     function clone_marker() {
-        marker_fs = $('#marker_fs');
+        var marker_fs = $('#marker_fs');
+        var header_fs = marker_fs.find('div:first');
+        var marker_nb = marker_fs.find('div.form-group').length;
+        var new_marker = $('{{ m.new_custom()|replace("\n","") }}');
 
         // Toggle header
-        header_fs = marker_fs.find('div:first')
         if (header_fs.hasClass('hide')) {
             header_fs.removeClass('hide');
         }
-
-        // Create new div
-        var marker_nb = marker_fs.find('div.form-group').length - 1;
-        var new_marker = $('{{ m.new_custom()|replace("\n","") }}');
 
         // Replace i with corresponding index
         new_marker.find('label:first').text((marker_nb + 1));
@@ -130,8 +140,38 @@
             var id = $(this).attr('id').replace('-i-', '-' + marker_nb + '-');
             $(this).attr({'name': id, 'id': id});
         });
+        new_marker.find('a:last').attr('onclick', 'remove_custom(' + marker_nb + ');')
 
-        marker_fs.find('div.form-group:last').after(new_marker);
+        // Insert new marker
+        if (marker_nb == 0) {
+            header_fs.after(new_marker);
+        } else {
+            marker_fs.find('div.form-group:last').after(new_marker);
+        }
+    }
+
+    function remove_custom(idx) {
+        var marker_fs = $('#marker_fs');
+        var header_fs = marker_fs.find('div:first');
+        var markers = marker_fs.find('div.form-group');
+
+        // Toggle header if necessary
+        if (markers.length == 1) {
+            header_fs.addClass('hide');
+        }
+
+        // Update following markers
+        for (var i = idx + 1; i < markers.length; i++) {
+            var marker = $(markers[i]);
+            marker.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + i + '-', '-' + (i - 1) + '-');
+                $(this).attr({'name': id, 'id': id});
+            });
+            marker.find('a:last').attr('onclick', 'remove_custom(' + (i - 1) + ');')
+        }
+
+        // Remove corresponding marker
+        markers[idx].remove();
 
 
     }

@@ -7,7 +7,7 @@ Description: Flask views
 '''
 
 import os, operator
-from flask import Blueprint, render_template, request, send_from_directory
+from flask import Blueprint, render_template, request, send_from_directory, flash
 from geoshaker.frontend import forms
 from geoshaker.core import shaker, coordinates
 
@@ -55,6 +55,11 @@ def home():
             )
         )
         variables = [shaker.UnknownValue(*elt) for elt in shake['variables']]
+        nb_combinations = reduce(operator.mul, [len(elt) for elt in variables])
+
+        if nb_combinations > 100000:
+            flash('Too much combinations to shake. Limit is 100000. There are %d combinations with your variables' % nb_combinations)
+            return render_template('home.html', form=form)
 
         # Manage custom markers
         shake['customs'] = []
@@ -84,7 +89,6 @@ def home():
                 customs.append((c_coord, c['circle_radius']))
 
         # Compute combinations
-        nb_combinations = reduce(operator.mul, [len(elt) for elt in variables])
         combinations = shaker.generate_solutions(mystery, cache, variables, customs, shake['max_distance'])
 
         context = {
