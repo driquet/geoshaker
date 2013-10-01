@@ -6,7 +6,7 @@ Author: Damien Riquet <d.riquet@gmail.com>
 Description: Web forms
 '''
 
-import re, string
+import re, string, collections
 from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators, FloatField, BooleanField
 
 
@@ -119,10 +119,24 @@ class ShakerForm(Form):
 
     def validate_cache(form, field):
         symbols = set(c for c in field.data if c in string.lowercase)
-        variables = { s.form.symbol.data for s in form.variables }
+        variables = [s.form.symbol.data for s in form.variables]
 
-        if len(symbols - variables):
-            raise validators.ValidationError('Missing unknown value(s) : %s' % ', '.join(symbols - variables))
+        if len(symbols - set(variables)):
+            raise validators.ValidationError('Missing unknown value(s) : %s' % ', '.join(symbols - set(variables)))
+
+        # Looking for multiple declaration of the same variable
+        variables_counter = collections.Counter(variables)
+        multi_declaration = [var for var,count in variables_counter.items() if count > 1]
+
+        if len(multi_declaration):
+            raise validators.ValidationError('Multi declaration of variable(s) below : %s' % ', '.join(multi_declaration))
+
+        # Looking for variable not used in the cache coordinates
+        variables_used = [var for var in variables if var not in symbols]
+
+        if len(variables_used):
+            raise validators.ValidationError('Useless variable declaration(s) below : %s' % ', '.join(variables_used))
+
 
 
 if __name__ == '__main__':
