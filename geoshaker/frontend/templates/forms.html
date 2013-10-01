@@ -33,7 +33,7 @@
             value="{% if field.max_val.data %}{{ field.max_val.data }}{% endif %}">
         </div>
         <div class="col-sm-1 {% if idx <= 1 %}hide{% endif %}">
-            <a href="javascript:void(0)" onclick="remove_variable({{ idx }});"><span class="glyphicon glyphicon-remove"></span></a>
+            <a href="javascript:void(0)" onclick="remove_variable({{ idx - 1 }});"><span class="glyphicon glyphicon-remove"></span></a>
         </div>
     </div>
 {%- endmacro %}
@@ -65,7 +65,7 @@
         </div>
 
         <div class="col-sm-1">
-            <a href="javascript:void(0)" onclick="remove_custom({{ idx}});"><span class="glyphicon glyphicon-remove"></span></a>
+            <a href="javascript:void(0)" onclick="remove_custom({{ idx }});"><span class="glyphicon glyphicon-remove"></span></a>
         </div>
 
     </div>
