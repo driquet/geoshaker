@@ -9,7 +9,7 @@ Description: Flask views
 import os, operator
 from flask import Blueprint, render_template, request, send_from_directory, flash
 from geoshaker.frontend import forms
-from geoshaker.core import shaker, coordinates
+from geoshaker.core import shaker, coordinates, arithmetic_coordinates
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
 
@@ -41,19 +41,7 @@ def home():
             )
         )
 
-        cache = (
-            (
-                1 if c_split.group(1) == 'N' else -1,
-                c_split.group(2),
-                c_split.group(3).split('.')[0],
-                c_split.group(3).split('.')[1],
-            ), (
-                1 if c_split.group(4) == 'E' else -1,
-                c_split.group(5),
-                c_split.group(6).split('.')[0],
-                c_split.group(6).split('.')[1],
-            )
-        )
+        cache = arithmetic_coordinates.ArithmeticCoordinates(shake['cache'])
         variables = [shaker.UnknownValue(*elt) for elt in shake['variables']]
         nb_combinations = reduce(operator.mul, [len(elt) for elt in variables])
 
