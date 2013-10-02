@@ -64,6 +64,8 @@ class ArithmeticExpression(CoordinatesExpression):
     """
     def __init__(self, expr):
         self.expr = arithmetic_expr.parse_expr(expr)
+        if self.expr is None:
+            raise SyntaxError
 
     def eval(self, values):
         return self.expr.eval(values)
@@ -78,11 +80,9 @@ class ArithmeticCoordinates:
             Example : N50 40.A(B+C*A)5 E003 23.(A+B*C)
         """
         # Try to match the regular expression
-        coord_m = coordinates_re.match(expr)
+        coord_m = coordinates_re.match(str_coordinates)
         if not coord_m:
             raise SyntaxError
-
-        print coord_m.groups()
 
         # Positions
         self.lat_pos = 1 if coord_m.group('lat_pos') == 'N' else -1
@@ -118,7 +118,6 @@ class ArithmeticCoordinates:
         return lat, lon
 
     def eval_expressions(self, expressions, values):
-        print expressions
         return ''.join([str(elt.eval(values)) for elt in expressions])
 
 
@@ -141,7 +140,6 @@ if __name__ == '__main__':
     values = {
         'a' : 5,
         'b' : 2,
-        'c': 3
     }
     a = ArithmeticCoordinates(expr)
     print a.eval(values)

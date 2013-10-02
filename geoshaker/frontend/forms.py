@@ -8,6 +8,7 @@ Description: Web forms
 
 import re, string, collections
 from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators, FloatField, BooleanField
+from geoshaker.core.arithmetic_coordinates import ArithmeticCoordinates
 
 
 # Mystery regexp
@@ -26,6 +27,7 @@ mystery_re = re.compile(
     "(?P<lon_deg>\d{1,3})" # Longitude degrees
     "\s+" # At least one space
     "(?P<lon_min>\d{1,2}\.\d{3})" # Longitude minutes
+    "\s*"
     "$"
 )
 
@@ -104,9 +106,7 @@ class ShakerForm(Form):
     mystery = TextField('Mystery coordinates', [
         validators.Regexp(mystery_re, message="Wrong coordinates format.")
     ], default="N50 38.455 E003 02.670")
-    cache = TextField('Cache coordinates', [
-        validators.Regexp(cache_re, message="Wrong coordinates format.")
-    ], default="N50 38.aa2 E003 02.5a3")
+    cache = TextField('Cache coordinates', [], default="N50 38.aa2 E003 02.5a3")
     max_distance = FloatField('Max distance (km)', [
         validators.NumberRange(min=0, message="Must be greater or equal to %(min)d."),
     ], default=2)
@@ -118,6 +118,12 @@ class ShakerForm(Form):
     customs = FieldList(FormField(CustomItem))
 
     def validate_cache(form, field):
+        # First verify that the format is valid
+        try:
+            ArithmeticCoordinates(field.data)
+        except SyntaxError:
+            raise validators.ValidationError('Wrong coordinates format.')
+
         symbols = set(c for c in field.data if c in string.lowercase)
         variables = [s.form.symbol.data for s in form.variables]
 
@@ -132,7 +138,7 @@ class ShakerForm(Form):
             raise validators.ValidationError('Multi declaration of variable(s) below : %s' % ', '.join(multi_declaration))
 
         # Looking for variable not used in the cache coordinates
-        variables_used = [var for var in variables if var not in symbols]
+        variables_used = [var for var in variables if var not in symbols and var != '']
 
         if len(variables_used):
             raise validators.ValidationError('Useless variable declaration(s) below : %s' % ', '.join(variables_used))

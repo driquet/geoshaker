@@ -15,8 +15,6 @@ class ArithmeticExpr(object):
     def eval(self, values):
         pass
 
-    def get_symbols(self):
-        return []
 
 class SymbolExpr(ArithmeticExpr):
     def __init__(self, symbol):
@@ -27,8 +25,6 @@ class SymbolExpr(ArithmeticExpr):
             return values[self.symbol]
         raise IndexError
 
-    def get_symbols(self):
-        return [self.symbol]
 
 class IntExpr(ArithmeticExpr):
     def __init__(self, value):
@@ -37,6 +33,16 @@ class IntExpr(ArithmeticExpr):
     def eval(self, values):
         return self.value
 
+class MixedExpr(ArithmeticExpr):
+    """ Mix between int and symbols (a1b for example) """
+    def __init__(self, val):
+        self.elements = [val]
+
+    def addElement(self, val):
+        self.elements.append(val)
+
+    def eval(self, values):
+        return int(''.join([str(elt.eval(values)) for elt in reversed(self.elements)]))
 
 class MinusExpr(ArithmeticExpr):
     def __init__(self, expr):
@@ -54,8 +60,6 @@ class BinOp(ArithmeticExpr):
     def eval(self, values):
         return self.op(self.left.eval(values), self.right.eval(values))
 
-    def get_symbols(self):
-        return self.left.get_symbols() + self.right.get_symbols()
 
 # LEXER
 # -----
@@ -120,6 +124,30 @@ def p_expression_symbol(t):
     'expression : SYMBOL'
     t[0] = SymbolExpr(t[1])
 
+def p_expression_mix(t):
+    'expression : mix_element mix_tail'
+    t[0] = t[2]
+    t[0].addElement(t[1])
+
+def p_expression_mix_tail(t):
+    ''' mix_tail : mix_element
+                 | mix_element mix_tail
+    '''
+    if len(t) == 2:
+        t[0] = MixedExpr(t[1])
+    else:
+        t[0] = t[2]
+        t[0].addElement(t[1])
+
+def p_expression_mix_symbol(t):
+    'mix_element : SYMBOL'
+    t[0] = SymbolExpr(t[1])
+
+def p_expression_mix_int(t):
+    'mix_element : INT'
+    t[0] = IntExpr(t[1])
+
+
 def p_expression_group(t):
     'expression : LPAREN expression RPAREN'
     t[0] = t[2]
@@ -139,10 +167,9 @@ def parse_expr(str_expr):
     return yacc.parse(str_expr)
 
 if __name__ == '__main__':
-    expr_str = 'a * (b + c - 2)'
+    expr_str = 'ab5c'
     values = {'a' : 3, 'b' : 2, 'c' : 4}
 
     expr = parse_expr(expr_str)
     if expr:
-        print expr.get_symbols()
         print expr.eval(values)

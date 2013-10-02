@@ -30,15 +30,23 @@ def generate_solutions(origin, coord, unknowns, excluded_area, max_distance=2):
 
     solutions = []
     for combination in itertools.product(*unknowns):
-        substitutions = [(unknowns[i].symbol, combination[i]) for i in xrange(len(combination))]
+        substitutions = {unknowns[i].symbol: combination[i] for i in xrange(len(combination))}
 
-        attempt_lat = [substitute(elt, substitutions) for elt in coord[0]]
-        attempt_lon = [substitute(elt, substitutions) for elt in coord[1]]
+        attempt_lat, attempt_lon = coord.eval(substitutions)
+        # Specific process for last element (floating part)
+        # If there is less than 3 digits, we add zeros (to the left)
 
         # Verify that values are valid
         if valid_coordinates(attempt_lat, attempt_lon):
-            attempt_lat = (attempt_lat[0], attempt_lat[1], float('%d.%d' % (attempt_lat[2], attempt_lat[3])))
-            attempt_lon = (attempt_lon[0], attempt_lon[1], float('%d.%d' % (attempt_lon[2], attempt_lon[3])))
+
+            lat_floating_part = str(attempt_lat[3])
+            lat_floating_part = '0' * (3 - len(lat_floating_part)) + lat_floating_part
+
+            lon_floating_part = str(attempt_lon[3])
+            lon_floating_part = '0' * (3 - len(lon_floating_part)) + lon_floating_part
+
+            attempt_lat = (attempt_lat[0], attempt_lat[1], float('%d.%s' % (attempt_lat[2], lat_floating_part)))
+            attempt_lon = (attempt_lon[0], attempt_lon[1], float('%d.%s' % (attempt_lon[2], lon_floating_part)))
 
             attempt = coordinates.geocaching2decimal(attempt_lat, attempt_lon)
 
@@ -57,8 +65,6 @@ def generate_solutions(origin, coord, unknowns, excluded_area, max_distance=2):
 
             if not excluded:
                 solutions.append((combination, attempt, d))
-        else:
-            print 'invalid', attempt_lat, attempt_lon
 
 
     return solutions
