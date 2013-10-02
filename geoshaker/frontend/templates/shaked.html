@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#summary">
+                    Shaker summary
+                </a>
+            </h4>
+        </div>
+        <div id="summary" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <h3>Shaker summary</h3>
+                <dl class="dl-horizontal">
+                    <dt>Mystery coordinates</dt>
+                    <dd>{{ shake.mystery }}</dd>
+                    <dt>Cache coordinates</dt>
+                    <dd>{{ shake.cache}}</dd>
+                    <dt>Max distance (km)</dt>
+                    <dd>{{ shake.max_distance }}</dd>
+                    <dt># Valid combinations</dt>
+                    <dd>{{ combinations|length }}</dd>
+                    <dt># Total combinations</dt>
+                    <dd>{{ nb_combinations }}</dd>
+                </dl>
+
+                <h4>Variables</h4>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">Symbol</th>
+                            <th class="text-center">Min value</th>
+                            <th class="text-center">Max value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for var in shake.variables %}
+                    <tr>
+                        <td class="text-center">{{ loop.index }}</td>
+                        <td class="text-center">{{ var[0] }}</td>
+                        <td class="text-center">{{ var[1] }}</td>
+                        <td class="text-center">{{ var[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                    Combinations shaked : {{ combinations|length }}/{{ nb_combinations}}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            {% for var in shake.variables %}
+                            <th class="text-center">{{ var[0] }}</th>
+                            {% endfor %}
+                            <th class="text-center">Coordinates</th>
+                            <th class="text-center">Distance to mystery</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for combination in combinations %}
+                    <tr>
+                        <td class="text-center">{{ loop.index }}</td>
+                        {% for c in combination[0] %}
+                        <td class="text-center">{{ c }}</td>
+                        {% endfor %}
+                        <td class="text-center">{{ combination[1].to_geocaching_string() }}</td>
+                        <td class="text-center">{{ "%.2f" % combination[2] }}</td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div>
+    <p/>
+    <div id="gmap" class="google-map-canvas"></div>
+
+    <p>
+        <ul class="list-inline">
+            <li><img src="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"> Mystery coordinates</li>
+            <li><img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png"> Valid cache coordinates</li>
+            <li><img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png"> Custom item</li>
+        </ul>
+    </p>
+</div>
+{% endblock %}
+
+
+{% block js_include %}
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCb9OxndZ_xfhGgZYYyX5EKB9GmudnDWpk&sensor=false"></script>
+<script>
+var map;
+function initialize() {
+    var center = new google.maps.LatLng({{ mystery_coord.lat }}, {{mystery_coord.lon }})
+    var info_window = new google.maps.InfoWindow();
+    var mapOptions = {
+        zoom: 13,
+        center: center,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('gmap'),
+                              mapOptions);
+
+    // Mystery overlay
+    var mysteryCircle = {
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: map,
+      center: center,
+      radius: {{ shake.max_distance * 1000}}
+    };
+    cityCircle = new google.maps.Circle(mysteryCircle);
+
+    var mystery_string = '<p><strong>Mystery coordinates </strong>: {{ mystery_coord.to_geocaching_string() }}</p>';
+    var mystery_marker = new google.maps.Marker({
+        position: center,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        map: map
+    });
+    google.maps.event.addListener(mystery_marker, 'click', function() {
+        info_window.setContent(mystery_string);
+        info_window.open(map, mystery_marker);
+    });
+
+    // Shaked combinations
+    {% for combination in combinations %}
+        var content_{{ loop.index0 }} = '<div style="width: 250px;"><p><strong>Coordinates </strong>: {{ combination[1].to_geocaching_string() }}.' +
+        '<br/> <strong>Variables </strong>: ' +
+            '{{ format_variables(shake.variables, combination[0]) }}'
+        '</p></div>';
+        var marker_{{ loop.index0 }} = new google.maps.Marker({
+            position: new google.maps.LatLng({{ combination[1].lat }}, {{ combination[1].lon }}),
+            map: map,
+            maxWidth: 300
+        });
+        google.maps.event.addListener(marker_{{ loop.index0 }}, 'click', function() {
+            info_window.setContent(content_{{ loop.index0 }});
+            info_window.open(map, marker_{{ loop.index0 }});
+        });
+    {% endfor %}
+
+    // Custom markers
+    {% for marker in shake.customs %}
+        var custom_{{ loop.index0 }} = new google.maps.LatLng({{ marker.coordinates.lat }}, {{ marker.coordinates.lon }});
+        var custom_marker_{{ loop.index0 }} = new google.maps.Marker({
+            position: custom_{{ loop.index0 }},
+            map: map,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+        });
+
+        var content_marker_{{ loop.index0 }} = '<div style="width: 250px;"><p><strong>Custom Marker </strong>: {{ marker.name }} ' +
+        '<br/><strong>Coordinates </strong>: {{ marker.coordinates.to_geocaching_string() }}.' +
+        '</p></div>';
+
+        google.maps.event.addListener(custom_marker_{{ loop.index0 }}, 'click', function() {
+            info_window.setContent(content_marker_{{ loop.index0 }});
+            info_window.open(map, custom_marker_{{ loop.index0 }});
+        });
+
+
+        {% if marker.circle_draw %}
+            // Circle overlay
+            new google.maps.Circle({
+                strokeColor: '#00FF00',
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                fillColor: '#00FF00',
+                fillOpacity: 0.35,
+                map: map,
+                center: custom_{{ loop.index0 }},
+                radius: {{ marker.circle_radius }}
+            });
+        {% endif %}
+    {% endfor %}
+}
+
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+{% endblock %}

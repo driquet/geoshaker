@@ -1,0 +1,98 @@
+{% macro form_field_label(field, tooltip, size=6) -%}
+    <div class="form-group">
+        <label for="{{  field.id }}" class="col-sm-4 control-label">{{ field.label }}</label>
+        <div class="col-sm-{{ size }} {% if field.errors %}has-error{% endif %}">
+            <input type="text" name="{{ field.id }}" id="{{ field.id }}" class="form-control"
+            value="{% if field.data %}{{ field.data }}{% else %}{{ field.default}}{% endif %}">
+        </div>
+    </div>
+    {% if field.errors %}
+    <div class="col-lg-offset-4 col-lg-6">
+        <ul>
+        {% for error in field.errors %}
+        <li><p class="text-danger">{{ error }}</p></li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+{%- endmacro %}
+
+{% macro form_variable(field, idx) -%}
+    <div class="form-group unknowns">
+        <label for="{{ field.symbol.id }}" class="col-sm-4 control-label">Variable {{ idx }}</label>
+        <div class="col-sm-2 {% if 'symbol' in field.errors %}has-error{% endif %}">
+            <input type="text" name="{{ field.symbol.id }}" id="{{ field.symbol.id }}" class="form-control"
+            value="{% if field.symbol.data %}{{ field.symbol.data }}{% endif %}">
+        </div>
+        <div class="col-sm-2 {% if 'min_val' in field.errors %}has-error{% endif %}">
+            <input type="text" name="{{ field.min_val.id }}" id="{{ field.min_val.id }}" class="form-control"
+            value="{% if field.min_val.data %}{{ field.min_val.data }}{% endif %}">
+        </div>
+        <div class="col-sm-2 {% if 'max_val' in field.errors %}has-error{% endif %}">
+            <input type="text" name="{{ field.max_val.id }}" id="{{ field.max_val.id }}" class="form-control"
+            value="{% if field.max_val.data %}{{ field.max_val.data }}{% endif %}">
+        </div>
+        <div class="col-sm-1 {% if idx <= 1 %}hide{% endif %}">
+            <a href="javascript:void(0)" onclick="remove_variable({{ idx - 1 }});"><span class="glyphicon glyphicon-remove"></span></a>
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro form_custom(custom, idx) -%}
+    <div class="form-group">
+        <div class="col-sm-3 {% if 'custom_name' in custom.errors %}has-error{% endif %}">
+            <input type="text" name="{{ custom.custom_name.id }}" id="{{ custom.custom_name.id }}"
+            class="form-control" value="{% if custom.custom_name.data %}{{ custom.custom_name.data }}{% endif %}">
+        </div>
+        <div class="col-sm-4 {% if 'coordinates' in custom.errors %}has-error{% endif %}">
+            <input type="text" name="{{ custom.coordinates.id }}" id="{{ custom.coordinates.id }}"
+            class="form-control" value="{% if custom.coordinates.data %}{{ custom.coordinates.data }}{% endif %}">
+        </div>
+
+        <div class="col-sm-2 {% if 'circle_radius' in custom.errors %}has-error{% endif %}">
+            <input type="text" name="{{ custom.circle_radius.id }}" id="{{ custom.circle_radius.id }}"
+            class="form-control" value="{% if custom.circle_radius.data %}{{ custom.circle_radius.data }}{% endif %}">
+        </div>
+
+        <div class="col-sm-1">
+            <input type="checkbox" name="{{ custom.circle_draw.id }}" id="{{ custom.circle_draw.id }}"
+            {% if custom.circle_draw.data %}checked{% endif %}>
+        </div>
+
+        <div class="col-sm-1">
+            <input type="checkbox" name="{{ custom.exclude_from.id }}" id="{{ custom.exclude_from.id }}"
+            {% if custom.exclude_from.data %}checked{% endif %}>
+        </div>
+
+        <div class="col-sm-1">
+            <a href="javascript:void(0)" onclick="remove_custom({{ idx }});"><span class="glyphicon glyphicon-remove"></span></a>
+        </div>
+
+    </div>
+{%- endmacro %}
+
+{% macro new_custom() -%}
+    <div class="form-group">
+        <div class="col-sm-3 ">
+            <input name="customs-i-custom_name" id="customs-i-custom_name" class="form-control"
+            type="text" placeholder="Cache/Marker name">
+        </div>
+        <div class="col-sm-4 ">
+            <input name="customs-i-coordinates" id="customs-i-coordinates" class="form-control"
+            type="text" placeholder="NXX XX.XXX EYYY YY.YYY">
+        </div>
+        <div class="col-sm-2 ">
+            <input name="customs-i-circle_radius" id="customs-i-circle_radius" class="form-control"
+            type="text" value="161">
+        </div>
+        <div class="col-sm-1 ">
+            <input type="checkbox" name="customs-i-circle_draw" id="customs-i-circle_draw" checked>
+        </div>
+        <div class="col-sm-1 ">
+            <input name="customs-i-exclude_from" id="customs-i-exclude_from" type="checkbox">
+        </div>
+        <div class="col-sm-1">
+            <a href="javascript:void(0)"><span class="glyphicon glyphicon-remove"></span></a>
+        </div>
+    </div>
+{%- endmacro %}

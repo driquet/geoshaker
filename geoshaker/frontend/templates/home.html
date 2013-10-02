@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% import "forms.html" as m %}
+
+{% block content %}
+    <p class="lead">While solving mystery cache, Geoshaker gives you a hand by shaking all combinations and keeping the coherent ones. Give it a try !</p>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
+    <form class="form-horizontal well" role="form" method="post">
+
+        <fieldset>
+            <legend>Coordinates to shake</legend>
+            <p>
+            <em>
+                Please enter here the initial coordinates of the mystery cache and
+                the coordinates of the cache which can contain symbols (a symbol is a lowercase letter).
+            </em>
+            </p>
+            {{ m.form_field_label(form.mystery, "test") }}
+            {{ m.form_field_label(form.cache) }}
+            {{ m.form_field_label(form.max_distance, size=2) }}
+        </fieldset>
+
+        <fieldset id="variable_fs">
+            <legend>Unknown values</legend>
+            <p>
+            <em>
+                An unknown value is a variable. It has a name (or a symbol) and a range (from min to max value).
+                You can use up to 6 variables.
+            </em>
+            </p>
+            <div>
+                <p class="col-sm-offset-4 col-sm-2 text-center"><strong>Symbol</strong></p>
+                <p class="col-sm-2 text-center"><strong>Min value</strong></p>
+                <p class="col-sm-2 text-center"><strong>Max value</strong></p>
+            </div>
+
+            {% for var in form.variables %}
+                {{ m.form_variable(var, loop.index) }}
+            {% endfor %}
+
+            <p class="col-sm-offset-8">
+                <button type="button" class="btn btn-default btn-sm" id="add_variable">
+                <span class="glyphicon glyphicon-plus"></span> Add a variable
+                </button>
+            </p>
+
+        </fieldset>
+
+        <fieldset id="marker_fs">
+            <legend>Custom markers</legend>
+            <p>
+            <em>
+                You can add custom markers on the map. You can draw a circle around this marker (default is 161 meters, hehe).
+                Also, you can exclude combinations from shaked combinations if the result is too close from your marker.
+                Useful, eh !
+            </em>
+            </p>
+
+            <div class="{% if not form.customs|length %}hide{% endif %}">
+                <p class="col-sm-3 text-center"><strong>Name</strong></p>
+                <p class="col-sm-4 text-center"><strong>Coordinates</strong></p>
+                <p class="col-sm-2 text-center"><strong>Radius</strong></p>
+                <p class="col-sm-1 text-center"><strong>Circle</strong></p>
+                <p class="col-sm-1 text-center"><strong>Exclude</strong></p>
+            </div>
+
+            {% for custom in form.customs %}
+                {{ m.form_custom(custom, loop.index0) }}
+            {% endfor %}
+
+            <p class="col-sm-offset-8">
+                <button type="button" class="btn btn-default btn-sm" id="add_marker">
+                <span class="glyphicon glyphicon-plus"></span> Add a marker
+                </button>
+            </p>
+
+
+
+        </fieldset>
+
+
+        <hr/>
+        <div class="alert alert-info hide" id="loading-div">
+            <p class="text-center">
+            <small>
+                Computing all the combination can be long. Please do not refresh the page, it will not make it quicker !
+            </small>
+            </p>
+        </div>
+
+        <button type="submit" id="form_button" class="btn btn-default col-sm-offset-10">Submit</button>
+
+    </form>
+{% endblock %}
+
+{% block js_include %}
+
+<script>
+    $(document).ready(function () {
+        $('#add_variable').click(function () {
+            add_variable();
+        });
+
+        $('#form_button').click(function () {
+            $('#loading-div').removeClass('hide');
+        });
+
+        $('#add_marker').click(function () {
+            add_marker();
+        });
+
+
+    });
+
+    function add_marker() {
+        var marker_fs = $('#marker_fs');
+        var header_fs = marker_fs.find('div:first');
+        var marker_nb = marker_fs.find('div.form-group').length;
+        var new_marker = $('{{ m.new_custom()|replace("\n","") }}');
+
+        // Toggle header
+        if (header_fs.hasClass('hide')) {
+            header_fs.removeClass('hide');
+        }
+
+        // Replace i with corresponding index
+        new_marker.find(':input').each(function() {
+            var id = $(this).attr('id').replace('-i-', '-' + marker_nb + '-');
+            $(this).attr({'name': id, 'id': id});
+        });
+        new_marker.find('a:last').attr('onclick', 'remove_custom(' + marker_nb + ');')
+
+        // Insert new marker
+        if (marker_nb == 0) {
+            header_fs.after(new_marker);
+        } else {
+            marker_fs.find('div.form-group:last').after(new_marker);
+        }
+    }
+
+    function remove_custom(idx) {
+        var marker_fs = $('#marker_fs');
+        var header_fs = marker_fs.find('div:first');
+        var markers = marker_fs.find('div.form-group');
+
+        // Toggle header if necessary
+        if (markers.length == 1) {
+            header_fs.addClass('hide');
+        }
+
+        // Update following markers
+        for (var i = idx + 1; i < markers.length; i++) {
+            var marker = $(markers[i]);
+            marker.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + i + '-', '-' + (i - 1) + '-');
+                $(this).attr({'name': id, 'id': id});
+            });
+            marker.find('a:last').attr('onclick', 'remove_custom(' + (i - 1) + ');')
+        }
+
+        // Remove corresponding marker
+        markers[idx].remove();
+    }
+
+    function add_variable() {
+        var variable_fs = $('#variable_fs');
+        var v_len = variable_fs.find('div.form-group').length;
+        var v_last = $('#variable_fs div.form-group:last');
+
+        if (v_len < 6) {
+            // Create the new variable
+            var new_variable = v_last.clone(true);
+            new_variable.find('label:first').text('Variable ' + v_len);
+
+            new_variable.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + (v_len - 1) + '-', '-' + v_len + '-');
+                // Replace id, name and set value to empty
+                $(this).attr({'name': id, 'id': id}).val('');
+            });
+            new_variable.find('label:first').text('Variable ' + (v_len + 1));
+            new_variable.find('div:last').removeClass('hide');
+            new_variable.find('a:last').attr('onclick', 'remove_variable(' + v_len + ');')
+
+            // Insert new variable
+            v_last.after(new_variable);
+
+            // Disable button if necessary
+            if (v_len == 5) {
+                $('#add_variable').addClass("hide");
+            }
+        }
+    }
+
+    function remove_variable(idx) {
+        var variable_fs = $('#variable_fs');
+        var variables = variable_fs.find('div.form-group');
+
+        // Toggle button if necessary
+        $('#add_variable').removeClass("hide");
+
+        // Update following markers
+        for (var i = idx + 1; i < variables.length; i++) {
+            var variable = $(variables[i]);
+            variable.find(':input').each(function() {
+                var id = $(this).attr('id').replace('-' + i + '-', '-' + (i - 1) + '-');
+                $(this).attr({'name': id, 'id': id});
+            });
+            variable.find('label:first').text('Variable ' + i);
+            variable.find('a:last').attr('onclick', 'remove_variable(' + (i - 1) + ');')
+        }
+
+        // Remove corresponding marker
+        variables[idx].remove();
+    }
+
+
+</script>
+
+{% endblock %}
