@@ -10,7 +10,7 @@ import re
 from geoshaker.core import arithmetic_expr
 
 # Base regular expression
-arithm_expr = r'\[[\(\) a-z0-9\+\-\*\\]+\]'
+arithm_expr = r'\[[\(\) a-z0-9\+\-\*\/]+\]'
 atom_expr = r'[0-9a-z]'
 coord_expr = '(?:%s|%s)' % (arithm_expr, atom_expr)
 
@@ -70,6 +70,9 @@ class ArithmeticExpression(CoordinatesExpression):
     def eval(self, values):
         return self.expr.eval(values)
 
+    def __repr__(self):
+        return self.expr.__repr__()
+
 
 
 class ArithmeticCoordinates:
@@ -104,21 +107,21 @@ class ArithmeticCoordinates:
         """
         lat = (
             self.lat_pos,
-            int(self.eval_expressions(self.lat_deg, values)),
-            int(self.eval_expressions(self.lat_min_1, values)),
-            int(self.eval_expressions(self.lat_min_2, values))
+            int(eval_expressions(self.lat_deg, values)),
+            int(eval_expressions(self.lat_min_1, values)),
+            int(eval_expressions(self.lat_min_2, values))
         )
         lon = (
             self.lon_pos,
-            int(self.eval_expressions(self.lon_deg, values)),
-            int(self.eval_expressions(self.lon_min_1, values)),
-            int(self.eval_expressions(self.lon_min_2, values))
+            int(eval_expressions(self.lon_deg, values)),
+            int(eval_expressions(self.lon_min_1, values)),
+            int(eval_expressions(self.lon_min_2, values))
         )
 
         return lat, lon
 
-    def eval_expressions(self, expressions, values):
-        return ''.join([str(elt.eval(values)) for elt in expressions])
+def eval_expressions( expressions, values):
+    return ''.join([str(elt.eval(values)) for elt in expressions])
 
 
 def extract_expressions(str_expressions):
@@ -140,6 +143,7 @@ if __name__ == '__main__':
     values = {
         'a' : 5,
         'b' : 2,
+        'c' : 4
     }
     a = ArithmeticCoordinates(expr)
     print a.eval(values)

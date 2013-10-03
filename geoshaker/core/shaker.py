@@ -32,7 +32,10 @@ def generate_solutions(origin, coord, unknowns, excluded_area, max_distance=2):
     for combination in itertools.product(*unknowns):
         substitutions = {unknowns[i].symbol: combination[i] for i in xrange(len(combination))}
 
-        attempt_lat, attempt_lon = coord.eval(substitutions)
+        try:
+            attempt_lat, attempt_lon = coord.eval(substitutions)
+        except ValueError:
+            continue
         # Specific process for last element (floating part)
         # If there is less than 3 digits, we add zeros (to the left)
 
