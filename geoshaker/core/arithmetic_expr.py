@@ -15,6 +15,9 @@ class ArithmeticExpr(object):
     def eval(self, values):
         pass
 
+    def __repr__(self):
+        pass
+
 
 class SymbolExpr(ArithmeticExpr):
     def __init__(self, symbol):
@@ -25,6 +28,9 @@ class SymbolExpr(ArithmeticExpr):
             return values[self.symbol]
         raise IndexError
 
+    def __repr__(self):
+        return self.symbol
+
 
 class IntExpr(ArithmeticExpr):
     def __init__(self, value):
@@ -32,6 +38,9 @@ class IntExpr(ArithmeticExpr):
 
     def eval(self, values):
         return self.value
+
+    def __repr__(self):
+        return str(self.value)
 
 class MixedExpr(ArithmeticExpr):
     """ Mix between int and symbols (a1b for example) """
@@ -44,12 +53,18 @@ class MixedExpr(ArithmeticExpr):
     def eval(self, values):
         return int(''.join([str(elt.eval(values)) for elt in reversed(self.elements)]))
 
+    def __repr__(self):
+        return ''.join([elt.__repr__() for elt in self.elements])
+
 class MinusExpr(ArithmeticExpr):
     def __init__(self, expr):
         self.expr = expr
 
     def eval(self, values):
         return - self.expr.eval(values)
+
+    def __repr__(self):
+        return '-' + str(self.expr.__repr__())
 
 class BinOp(ArithmeticExpr):
     def __init__(self, left, op, right):
@@ -59,6 +74,9 @@ class BinOp(ArithmeticExpr):
 
     def eval(self, values):
         return self.op(self.left.eval(values), self.right.eval(values))
+
+    def __repr__(self):
+        return self.left.__repr__() + ' OP ' + self.right.__repr__()
 
 
 # LEXER
@@ -71,7 +89,7 @@ tokens = (
 )
 
 t_PLUS   = r'\+'
-t_MINUS  = r'-'
+t_MINUS  = r'\-'
 t_TIMES  = r'\*'
 t_DIVIDE = r'/'
 t_SYMBOL = r'[a-z]'
@@ -167,7 +185,7 @@ def parse_expr(str_expr):
     return yacc.parse(str_expr)
 
 if __name__ == '__main__':
-    expr_str = 'ab5c'
+    expr_str = 'a - 1'
     values = {'a' : 3, 'b' : 2, 'c' : 4}
 
     expr = parse_expr(expr_str)
