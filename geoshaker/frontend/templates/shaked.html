@@ -5,7 +5,7 @@
 
 <div class="row" style="margin-bottom:15px;">
     <div class="col-md-4 col-md-offset-4">
-        <a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit your search</a>
+        <a href="#" onclick="history.go(-1);return false;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit your search</a>
         <a href="{{ url_for('.home') }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span> New Search</a>
     </div>
 </div>
@@ -106,17 +106,16 @@
 
 
 
-<div>
-    <p/>
-    <div id="gmap" class="google-map-canvas"></div>
-
-    <p>
+<div class="row" style="margin-top:25px;">
+    <div class="col-md-8 col-md-offset-2">
         <ul class="list-inline">
             <li><img src="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"> Mystery coordinates</li>
             <li><img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png"> Valid cache coordinates</li>
             <li><img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png"> Custom item</li>
         </ul>
-    </p>
+    </div>
+    <div id="gmap" class="google-map-canvas"></div>
+
 </div>
 {% endblock %}
 
