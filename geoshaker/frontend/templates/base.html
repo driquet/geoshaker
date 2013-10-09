@@ -30,7 +30,17 @@
                 <div class="collapse navbar-collapse pull-right">
                     <ul class="nav navbar-nav">
                         <li><a href="{{ url_for('.home') }}">{{ _('Home') }}</a></li>
-                        <li><a href="">{{ _('Help') }}</a></li>
+                        <li><a href="{{ url_for('.help') }}">{{ _('Help') }}</a></li>
+                        <li>
+                            <a href="#"  class="dropdown-toggle" data-toggle="dropdown" >
+                                {{ get_flag(get_language())|safe}} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                {% for iso, name in config.LANGUAGES.iteritems() %}
+                                <li><a href="{{ url_for('.set_locale', locale=iso) }}">{{ get_flag(iso)|safe }} {{ name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

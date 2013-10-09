@@ -1,0 +1,179 @@
+# French translations for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-10-08 15:28+0200\n"
+"PO-Revision-Date: 2013-10-08 13:57+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+#: frontend/forms.py:107 frontend/templates/shaked.html:111
+msgid "Mystery coordinates"
+msgstr "Coordonnées de la cache mystère"
+
+#: frontend/forms.py:110
+msgid "Cache coordinates"
+msgstr "Coordonnées de la cache finale"
+
+#: frontend/forms.py:111
+msgid "Max distance (km)"
+msgstr "Distance maximale (km)"
+
+#: frontend/templates/base.html:32
+msgid "Home"
+msgstr "Accueil"
+
+#: frontend/templates/base.html:33
+msgid "Help"
+msgstr "Aide"
+
+#: frontend/templates/base.html:51
+msgid "GeoShaker - Shake mystery caches"
+msgstr ""
+
+#: frontend/templates/base.html:52
+msgid "Brought to you by Damien Riquet"
+msgstr "Proposé par Damien Riquet"
+
+#: frontend/templates/home.html:6
+msgid ""
+"While solving mystery cache, Geoshaker gives you a hand by shaking all "
+"combinations and keeping the coherent ones. Give it a try !"
+msgstr ""
+"Lorsque vous cherchez à résoudre une cache mystère, GeoShaker vous donne "
+"un coup de main en générant toutes les combinaisons et en conservant "
+"seulement celles qui sont valides. À vous de jouer !"
+
+#: frontend/templates/home.html:24
+msgid "Coordinates to shake"
+msgstr "Coordonnées à générer"
+
+#: frontend/templates/home.html:27
+msgid ""
+"Please enter here the initial coordinates of the mystery cache and the "
+"coordinates of the cache which can contain symbols (a symbol is a "
+"lowercase letter)."
+msgstr ""
+"Entrez les coordonnées initiales de la cache mystère, ainsi que les "
+"coordonnées de la cache finale (qui peut contenir des symboles, un "
+"symbole étant une lettre minuscule)."
+
+#: frontend/templates/home.html:36
+msgid "Unknown values"
+msgstr "Valeurs inconnues"
+
+#: frontend/templates/home.html:39
+msgid ""
+"An unknown value is a variable. It has a name (or a symbol) and a range "
+"(from min to max value). You can use up to 6 variables."
+msgstr ""
+"Une valeur inconnue est une variable. Elle a un nom (ou un symbole), un "
+"intervalle de valeurs (d'une valeur minimale à une valeur maximale). Vous"
+" pouvez utiliser jusqu'à 6 variables."
+
+#: frontend/templates/home.html:43
+msgid "Symbol"
+msgstr "Symbole"
+
+#: frontend/templates/home.html:44
+msgid "Min value"
+msgstr "Valeur min"
+
+#: frontend/templates/home.html:45
+msgid "Max value"
+msgstr "Valeur max"
+
+#: frontend/templates/home.html:54
+msgid "Add a variable"
+msgstr "Ajouter une variable"
+
+#: frontend/templates/home.html:61
+msgid "Custom markers"
+msgstr "Marqueurs personnalisés"
+
+#: frontend/templates/home.html:64
+msgid ""
+"You can add custom markers on the map. You can draw a circle around this "
+"marker (default is 161 meters, hehe). Also, you can exclude combinations "
+"from shaked combinations if the result is too close from your marker. "
+"Useful, eh !"
+msgstr ""
+"Vous pouvez ajouter des marqueurs personnalisés sur la carte. Vous pouvez"
+" dessiner un cercle autour de ces marqueurs (le rayon par défaut est 161 "
+"mètres, héhé). Également, vous pouvez exclure des combinaisons si le "
+"résultat est trop près de votre marqueur. Utile, n'est ce pas !"
+
+#: frontend/templates/home.html:69
+msgid "Name"
+msgstr "Nom"
+
+#: frontend/templates/home.html:70
+msgid "Coordinates"
+msgstr "Coordonnées à générer"
+
+#: frontend/templates/home.html:71
+msgid "Radius"
+msgstr "Rayon"
+
+#: frontend/templates/home.html:72
+msgid "Circle"
+msgstr "Cercle"
+
+#: frontend/templates/home.html:73
+msgid "Exclude"
+msgstr "Exclure"
+
+#: frontend/templates/home.html:82
+msgid "Add a marker"
+msgstr "Ajouter un marqueur"
+
+#: frontend/templates/home.html:95
+msgid ""
+"Computing all the combination can be long. Please do not refresh the "
+"page, it will not make it quicker !"
+msgstr ""
+"Génerer toutes les combinaisons peut demander du temps. Merci de ne pas "
+"rafraichir la page, cela ne fera pas accélerer les choses."
+
+#: frontend/templates/home.html:100
+msgid "Submit"
+msgstr "Envoyer"
+
+#: frontend/templates/home.html:188 frontend/templates/home.html:216
+msgid "Variable"
+msgstr ""
+
+#: frontend/templates/shaked.html:8
+msgid "Edit your search"
+msgstr "Modifier votre recherche"
+
+#: frontend/templates/shaked.html:9
+msgid "New Search"
+msgstr "Nouvelle recherche"
+
+#: frontend/templates/shaked.html:18
+msgid "Shaker summary"
+msgstr "Résumé"
+
+#: frontend/templates/shaked.html:68
+msgid "Combinations shaked"
+msgstr "Combinaisons générées"
+
+#: frontend/templates/shaked.html:112
+msgid "Valid cache coordinates"
+msgstr "Coordonnées valides"
+
+#: frontend/templates/shaked.html:113
+msgid "Custom marker"
+msgstr "Marqueur personnalisé"
+

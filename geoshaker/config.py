@@ -13,5 +13,5 @@ DEBUG = True
 # Languages
 LANGUAGES = {
     'en': 'English',
-    'fr': 'Français'
+    'fr': u'Français'
 }

@@ -8,6 +8,7 @@ Description: Web forms
 
 import re, string, collections
 from wtforms import Form, TextField, FormField, IntegerField, FieldList, validators, FloatField, BooleanField
+from flask.ext.babel import lazy_gettext as _
 from geoshaker.core.arithmetic_coordinates import ArithmeticCoordinates
 
 
@@ -103,11 +104,11 @@ class ShakerForm(Form):
             - up to six unknowns with boundaries
     """
     # Origin and mystery data
-    mystery = TextField('Mystery coordinates', [
+    mystery = TextField(_('Mystery coordinates'), [
         validators.Regexp(mystery_re, message="Wrong coordinates format.")
     ], default="N50 38.455 E003 02.670")
-    cache = TextField('Cache coordinates', [], default="N50 38.aa2 E003 02.5a3")
-    max_distance = FloatField('Max distance (km)', [
+    cache = TextField(_('Cache coordinates'), [], default="N50 38.aa2 E003 02.5a3")
+    max_distance = FloatField(_('Max distance (km)'), [
         validators.NumberRange(min=0, message="Must be greater or equal to %(min)d."),
     ], default=2)
 

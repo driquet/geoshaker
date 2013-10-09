@@ -4,9 +4,9 @@
 
 
 <div class="row" style="margin-bottom:15px;">
-    <div class="col-md-4 col-md-offset-4">
-        <a href="#" onclick="history.go(-1);return false;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit your search</a>
-        <a href="{{ url_for('.home') }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span> New Search</a>
+    <div class="col-md-6 col-md-offset-4">
+        <a href="#" onclick="history.go(-1);return false;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> {{_('Edit your search') }}</a>
+        <a href="{{ url_for('.home') }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span> {{ _('New Search') }}</a>
     </div>
 </div>
 
@@ -15,13 +15,12 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#summary">
-                    Shaker summary
+                    {{ _('Shaker summary') }}
                 </a>
             </h4>
         </div>
         <div id="summary" class="panel-collapse collapse">
             <div class="panel-body">
-                <h3>Shaker summary</h3>
                 <dl class="dl-horizontal">
                     <dt>Mystery coordinates</dt>
                     <dd>{{ shake.mystery }}</dd>
@@ -66,7 +65,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Combinations shaked : {{ combinations|length }}/{{ nb_combinations}}
+                    {{ _('Combinations shaked') }} : {{ combinations|length }}/{{ nb_combinations}}
                 </a>
             </h4>
         </div>
@@ -107,11 +106,11 @@
 
 
 <div class="row" style="margin-top:25px;">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-10 col-md-offset-2">
         <ul class="list-inline">
-            <li><img src="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"> Mystery coordinates</li>
-            <li><img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png"> Valid cache coordinates</li>
-            <li><img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png"> Custom item</li>
+            <li><img src="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"> {{ _('Mystery coordinates') }}</li>
+            <li><img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png"> {{ _('Valid cache coordinates') }}</li>
+            <li><img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png"> {{ _('Custom marker') }}</li>
         </ul>
     </div>
     <div id="gmap" class="google-map-canvas"></div>
