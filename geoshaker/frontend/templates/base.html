@@ -21,11 +21,34 @@
 
     <!-- Wrap all page content here -->
     <div id="wrap">
+
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ url_for('.home') }}">Geoshaker</a>
+                </div>
+                <div class="collapse navbar-collapse pull-right">
+                    <ul class="nav navbar-nav">
+                        <li><a href="{{ url_for('.home') }}">{{ _('Home') }}</a></li>
+                        <li><a href="{{ url_for('.help') }}">{{ _('Help') }}</a></li>
+                        <li>
+                            <a href="#"  class="dropdown-toggle" data-toggle="dropdown" >
+                                {{ get_flag(get_language())|safe}} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                {% for iso, name in config.LANGUAGES.iteritems() %}
+                                <li><a href="{{ url_for('.set_locale', locale=iso) }}">{{ get_flag(iso)|safe }} {{ name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
       <!-- Begin page content -->
       <div class="container">
-        <div class="page-header">
-            <h1><a href="{{ url_for('.home') }}">Geoshaker</a> <small>Shake mystery caches</small></h1>
-        </div>
 
         {% block content %}
         {% endblock %}
@@ -35,8 +58,8 @@
 
     <div id="footer">
       <div class="container">
-        <p class="text-muted credit pull-left">GeoShaker - Shake mystery caches</p>
-        <p class="text-muted credit pull-right">Brought to you by Damien Riquet
+          <p class="text-muted credit pull-left">{{ _('GeoShaker - Shake mystery caches') }}</p>
+          <p class="text-muted credit pull-right">{{ _('Brought to you by Damien Riquet') }}
         <a target="_blank" href="mailto:d_dot_riquet_at_gmail_dot_com"><span class="glyphicon glyphicon-envelope"></span></a>
         <a target="_blank" href="http://www.lifl.fr/~riquetd/"><span class="glyphicon glyphicon-globe"></span></a>
         <a target="_blank" href="http://www.geocaching.com/profile/?guid=2bd22d34-6228-4430-813b-6dba1d87bc11&wid=3b23bd1b-d972-43f6-8e80-fc3b4b45dab7&ds=2"><span class="glyphicon glyphicon-user"></span></a>
@@ -51,5 +74,6 @@
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="{{ url_for('.static_files', filename='js/bootstrap.js') }}"></script>
     {% block js_include %}{% endblock %}
+    {% include 'statistics.html' %}
   </body>
 </html>

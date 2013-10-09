@@ -7,8 +7,8 @@ Description: Flask views
 '''
 
 import os, operator
-from flask import Blueprint, render_template, request, send_from_directory, flash
-from geoshaker.frontend import forms
+from flask import session, Blueprint, render_template, current_app, request, send_from_directory, flash, redirect, url_for
+from geoshaker.frontend import forms, rst_reader
 from geoshaker.core import shaker, coordinates, arithmetic_coordinates
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
@@ -91,8 +91,27 @@ def home():
 
     return render_template('home.html', form=form)
 
+@frontend.route('/help')
+def help():
+    help_path = 'translations/%s/help.rst' % get_language()
+    help_content = rst_reader.read_rst(help_path)
+
+    return render_template('help.html', help_content=help_content)
+
+
 @frontend.route('/static_files/<path:filename>')
 def static_files(filename):
     """ Deals with static files (like css and js) """
     static_path = os.path.join(frontend.root_path, 'templates', 'static')
     return send_from_directory(static_path, filename)
+
+@frontend.route('/locale/<locale>/')
+def set_locale(locale):
+    if locale in current_app.config['LANGUAGES']:
+        session['locale'] = locale
+    return redirect(url_for('.home'))
+
+def get_language():
+    if 'locale' in session:
+        return session['locale']
+    return request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
